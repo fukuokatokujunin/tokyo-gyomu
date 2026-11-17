@@ -16,9 +16,9 @@ EOF
 launchctl bootout "gui/$(id -u)" "$P" 2>/dev/null
 launchctl bootstrap "gui/$(id -u)" "$P"
 # 以前の方法（ログイン項目に webloc を登録）が残っていると確認画面が出るので外す
-osascript -e 'tell application "System Events" to delete (every login item whose name contains "業務管理システム")' >/dev/null 2>&1 \
-  && OLD="" || OLD="※ 以前の設定が残っている場合は「システム設定」→「一般」→「ログイン項目」の「業務管理システム.webloc」を − で外してください。"
+osascript -e 'tell application "System Events" to delete (every login item whose name contains "東京業務管理システム")' >/dev/null 2>&1 \
+  && OLD="" || OLD="※ 以前の設定が残っている場合は「システム設定」→「一般」→「ログイン項目」の「東京業務管理システム.webloc」を − で外してください。"
 echo ""
-echo "✅ 設定しました。いまブラウザで業務管理システムが開けば成功です（次回からMacの起動時に開きます）。"
+echo "✅ 設定しました。いまブラウザで東京の業務管理システムが開けば成功です（次回からMacの起動時に開きます）。"
 [ -n "$OLD" ] && echo "$OLD"
 exit 0
