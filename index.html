@@ -14,7 +14,7 @@
 <meta name="apple-mobile-web-app-title" content="東京徳純院">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="theme-color" content="#1e2533">
-<meta name="build" content="20261117174750">
+<meta name="build" content="20261117175502">
 <style>
   :root { --bg:#f6f7f9; --card:#fff; --ink:#1d2330; --sub:#6b7280; --pri:#2563eb; --ok:#059669; --ng:#dc2626; --warn:#d97706; --line:#e5e7eb; }
   * { box-sizing:border-box; }
@@ -1392,7 +1392,12 @@ function hoFill(s) {
   $('hoTo').innerHTML = '<option value="">宛先を選択</option><option value="all">全員</option>' + col.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
   if ([...$('hoTo').options].some(o => o.value === keep)) $('hoTo').value = keep;
 }
-function pairAfterLogin() { if (!pairTried && me) { pairTried = true; pairLink(false); } }
+/** 両方の拠点に当たる人（崇純さん）は、画面上部の拠点名を「徳純院」にする（2026-11-17 ユーザー指定。福岡・東京どちらのアプリでも） */
+const BOTH_IDS = [99];
+function pairAfterLogin() {
+  if (auth && BOTH_IDS.includes(Number(auth.id)) && $('appName')) $('appName').textContent = '徳純院';
+  if (!pairTried && me) { pairTried = true; pairLink(false); }
+}
 /** 通知の go：相手の拠点の知らせは「t|task:ID」で届く（sw.js）→ この画面の印に直す */
 function goNorm(g) {
   g = String(g || '');
