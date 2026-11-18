@@ -3,27 +3,135 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Mac用の設定</title>
+<!-- 2026-11-18 パソコンにくわしくない人が読んでも分かるように書き直した（番号つきの手順・用語の説明・「こうなればOK」・画面のまねの図） -->
 <style>
   body { margin:0; font-family:-apple-system,"Hiragino Sans","Yu Gothic",sans-serif; background:#f6f7fa; color:#1e2533; }
-  main { max-width:640px; margin:0 auto; padding:24px 16px; }
-  h1 { font-size:22px; color:#1f2a44; }
-  h2 { font-size:17px; margin:0 0 6px; color:#1f2a44; }
-  .card { background:#fff; border-radius:12px; padding:18px; margin:14px 0; box-shadow:0 1px 3px rgba(0,0,0,.08); }
-  a.dl, button { display:block; width:100%; text-align:center; background:#1f2a44; color:#fff; text-decoration:none; font-weight:bold; font-size:17px; padding:14px; border:0; border-radius:10px; margin-top:10px; cursor:pointer; font-family:inherit; }
-  code { display:block; background:#f2f4f8; border-radius:8px; padding:10px; font-size:13px; word-break:break-all; }
-  p { line-height:1.7; }
+  main { max-width:680px; margin:0 auto; padding:24px 16px 40px; }
+  h1 { font-size:22px; color:#1f2a44; margin:0 0 6px; }
+  h2 { font-size:19px; margin:0 0 8px; color:#1f2a44; }
+  h3 { font-size:15px; margin:18px 0 6px; color:#1f2a44; }
+  .card { background:#fff; border-radius:12px; padding:18px; margin:16px 0; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+  a.dl, button.big { box-sizing:border-box; display:block; width:100%; text-align:center; background:#1f2a44; color:#fff; text-decoration:none; font-weight:bold; font-size:17px; padding:14px; border:0; border-radius:10px; margin:10px 0 4px; cursor:pointer; font-family:inherit; }
+  code { display:block; background:#f2f4f8; border-radius:8px; padding:10px; font-size:13px; word-break:break-all; margin-top:8px; }
+  p { line-height:1.7; margin:6px 0; }
   .sub { color:#5b6b82; font-size:14px; }
+  .lead { font-size:15px; }
+  b.k { display:inline-block; border:1px solid #9aa6b8; border-bottom-width:3px; border-radius:6px; padding:0 7px; font-size:13px; background:#fff; line-height:1.6; margin:0 2px; }
+  ol.steps { list-style:none; padding:0; margin:12px 0 0; counter-reset:st; }
+  ol.steps > li { counter-increment:st; position:relative; padding:0 0 18px 42px; line-height:1.7; }
+  ol.steps > li::before { content:counter(st); position:absolute; left:0; top:0; width:28px; height:28px; border-radius:50%; background:#c8402b; color:#fff; font-weight:bold; text-align:center; line-height:28px; }
+  ol.steps > li > b:first-child { display:block; font-size:16px; color:#1f2a44; }
+  .ok { display:block; margin-top:6px; padding:6px 10px; border-radius:6px; background:#eef6f0; color:#2f6b45; font-size:14px; }
+  .ok::before { content:'こうなればOK：'; font-weight:bold; }
+  .tip { background:#fbf6ea; border-left:4px solid #b08c3c; border-radius:6px; padding:8px 12px; font-size:14px; line-height:1.7; margin-top:8px; }
+  .tip::before { content:'うまくいかない時：'; font-weight:bold; }
+  table.words { width:100%; border-collapse:collapse; font-size:14px; margin-top:8px; }
+  table.words th { text-align:left; white-space:nowrap; padding:6px 10px 6px 0; color:#1f2a44; vertical-align:top; }
+  table.words td { padding:6px 0; color:#3c475a; border-bottom:1px solid #eef0f4; }
+  table.words th { border-bottom:1px solid #eef0f4; }
+  .todo { margin:10px 0 0; padding:0; list-style:none; }
+  .todo li { padding:8px 12px; background:#f2f4f8; border-radius:8px; margin:6px 0; font-size:15px; }
+  /* 画面のまねの図 */
+  .fig { margin:10px 0 4px; }
+  .spot { display:flex; align-items:center; gap:8px; max-width:360px; margin:0 auto; background:#eceef1; border:1px solid #c9ced6; border-radius:12px; padding:9px 12px; box-shadow:0 6px 18px rgba(0,0,0,.12); font-size:16px; }
+  .spot .mg { font-size:16px; color:#6b7480; }
+  .term { max-width:420px; margin:0 auto; border-radius:9px; overflow:hidden; box-shadow:0 6px 18px rgba(0,0,0,.18); border:1px solid #b9bec7; }
+  .term .bar { background:#e6e7ea; padding:6px 8px; font-size:11px; color:#555; text-align:center; position:relative; }
+  .term .bar i { position:absolute; top:8px; width:10px; height:10px; border-radius:50%; }
+  .term .body { background:#fff; font-family:Menlo,monospace; font-size:11px; padding:10px; color:#222; min-height:58px; line-height:1.6; word-break:break-all; }
+  .term .ok2 { color:#2f6b45; }
+  .finder { display:flex; max-width:420px; margin:0 auto; border:1px solid #c9ced6; border-radius:9px; overflow:hidden; font-size:12px; box-shadow:0 6px 18px rgba(0,0,0,.12); }
+  .finder .side { background:#eceef1; padding:8px; width:120px; color:#5b6b82; line-height:2; }
+  .finder .side .on { background:#d5dbe6; border-radius:5px; color:#1f2a44; font-weight:bold; padding:0 6px; margin:0 -6px; }
+  .finder .main { flex:1; background:#fff; padding:10px; display:flex; gap:14px; align-items:flex-start; }
+  .file { text-align:center; width:96px; font-size:11px; color:#333; }
+  .file img, .file .zip { width:40px; height:40px; border-radius:9px; display:block; margin:0 auto 4px; }
+  .file .zip { width:32px; border:2px solid #8a94a6; border-radius:3px; background:#fff; font:bold 10px/36px -apple-system,sans-serif; color:#5b6b82; box-sizing:border-box; }
+  .mark { outline:3px solid #c8402b; outline-offset:2px; border-radius:6px; }
+  .flow { display:flex; align-items:center; justify-content:center; gap:10px; margin:12px 0 4px; flex-wrap:wrap; text-align:center; font-size:12px; color:#5b6b82; }
+  .flow .box { border:1px solid #d5dae3; border-radius:8px; padding:8px 10px; background:#fafbfc; min-width:110px; }
+  .flow .box img { width:40px; height:40px; border-radius:9px; display:block; margin:0 auto 4px; }
+  .flow .box .zip { display:block; width:32px; height:40px; margin:0 auto 4px; border:2px solid #8a94a6; border-radius:3px; background:#fff; font:bold 10px/36px -apple-system,sans-serif; color:#5b6b82; box-sizing:border-box; }
+  .flow .arw { font-size:20px; color:#8a7b5c; }
 </style></head>
 <body><main>
-  <h1>業務管理システム ― Mac用の設定</h1>
-  <p class="sub">設定のしかたは「業務管理システム 導入マニュアル」を見てください。</p>
-  <div class="card"><h2>① Macの起動時に自動で開く設定</h2>
-    <p class="sub">下のボタンでコピー → 「ターミナル」に貼り付けて return キー。</p>
-    <code id="cmd">curl -fsSL https://fukuokatokujunin.github.io/tokyo-gyomu/pc/mac-autostart.sh | bash</code>
-    <button id="cp">コピーする</button></div>
-  <div class="card"><h2>② デスクトップに置くアイコン</h2>
-    <p class="sub">閉じてしまった時に、ダブルクリックで開くためのアイコンです（アプリと同じロゴ）。ダウンロードした zip をダブルクリックすると「業務管理システム.webloc」ができるので、デスクトップへ移してください。</p>
-    <a class="dl" href="pc/tokyo-gyomu-mac.zip" download="東京業務管理システム.zip">アイコンをダウンロード</a></div>
+  <h1>東京徳純院 業務管理システム ― Mac（パソコン）の設定</h1>
+  <p class="lead">このページでは、Macで次の<b>2つの設定</b>をします。どちらも<b>1回やれば終わり</b>です（全部で5分ほど）。</p>
+  <ul class="todo">
+    <li>① <b>Macの電源を入れたら、業務管理システムが自動で開く</b>ようにする</li>
+    <li>② 閉じてしまった時のために、<b>画面にアイコンを置く</b>（ダブルクリックで開く）</li>
+  </ul>
+  <p class="sub">このページは、設定するMacで開いてください。分からない時は、無理に進めずに管理者に声をかけてください。</p>
+
+  <div class="card">
+    <h2>この説明に出てくる言葉</h2>
+    <table class="words">
+      <tr><th>command キー</th><td>キーボードの一番下の段、<b>スペースキーのすぐ左右</b>にある <b class="k">⌘ command</b> と書かれたキー</td></tr>
+      <tr><th>return キー</th><td>キーボードの右側にある大きなキー <b class="k">return</b>（「決定」のキー）</td></tr>
+      <tr><th>英数 キー</th><td>スペースキーの左にある <b class="k">英数</b>。押すと、英字（アルファベット）が打てるようになります</td></tr>
+      <tr><th>デスクトップ</th><td>Macの画面の<b>背景の部分</b>（窓が何も開いていない所）</td></tr>
+      <tr><th>Finder（ファインダー）</th><td>画面の一番下に並ぶアイコン（Dock）の<b>左はしにある、青と白の顔のマーク</b>。ファイルを探す時に使います</td></tr>
+      <tr><th>ドラッグ</th><td>マウス（またはトラックパッド）のボタンを<b>押したまま動かし、目的の所で離す</b>こと</td></tr>
+    </table>
+  </div>
+
+  <div class="card"><h2>① Macの電源を入れたら、自動で開くようにする</h2>
+    <p class="sub">「ターミナル」という、文字で命令を打つアプリに、下の文を貼り付けます。むずかしいことはしません。コピーして、貼り付けて、return を押すだけです。</p>
+    <ol class="steps">
+      <li><b>下の「コピーする」ボタンを押す</b>
+        <code id="cmd">curl -fsSL https://fukuokatokujunin.github.io/tokyo-gyomu/pc/mac-autostart.sh | bash</code>
+        <button class="big" id="cp">コピーする</button>
+        <span class="ok">ボタンの文字が「コピーしました ✓」に変わる（画面には何も出ませんが、これで覚えています）</span></li>
+      <li><b>キーボードの <b class="k">⌘ command</b> を押したまま、<b class="k">スペース</b> を押す</b>
+        <div class="fig"><div class="spot"><span class="mg">🔍</span><span style="color:#9aa3ad">Spotlight検索</span></div></div>
+        <span class="ok">画面のまん中に、細長い検索の窓が出る</span></li>
+      <li><b><b class="k">英数</b> キーを押してから、<b>terminal</b> と打つ</b>
+        <div class="fig"><div class="spot"><span class="mg">🔍</span><span>terminal</span><span style="margin-left:auto;color:#6b7480;font-size:13px">ターミナル</span></div></div>
+        <p class="sub">ひらがなのまま「たーみなる」と打つと、うまく開かないことがあります。必ず英字で。</p></li>
+      <li><b><b class="k">return</b> キーを押す</b>
+        <div class="fig"><div class="term"><div class="bar"><i style="left:8px;background:#ff5f57"></i><i style="left:22px;background:#febc2e"></i><i style="left:36px;background:#28c840"></i>ターミナル</div><div class="body">Last login: …<br>~ % <span style="background:#222;color:#222">_</span></div></div></div>
+        <span class="ok">上の図のような、文字だけの窓（ターミナル）が開く</span>
+        <div class="tip">画面の一番下の Finder（青と白の顔のマーク）を押す → 窓の左の「アプリケーション」→「ユーティリティ」フォルダをダブルクリック →「ターミナル」をダブルクリック。</div></li>
+      <li><b>ターミナルの窓の中を1回クリックしてから、<b class="k">⌘ command</b> を押したまま <b class="k">V</b> を押す</b>
+        <p class="sub">これで、手順1でコピーした文が貼り付けられます。</p>
+        <div class="fig"><div class="term"><div class="bar"><i style="left:8px;background:#ff5f57"></i><i style="left:22px;background:#febc2e"></i><i style="left:36px;background:#28c840"></i>ターミナル</div><div class="body">~ % curl -fsSL https://fukuokatokujunin.github.io/tokyo-gyomu/pc/mac-autostart.sh | bash</div></div></div>
+        <span class="ok">「curl -fsSL https://…」で始まる長い文が出る</span></li>
+      <li><b><b class="k">return</b> キーを押す</b>
+        <p class="sub">「“ターミナル”が“System Events”を制御しようとしています」という確認が出たら「<b>OK</b>」（または「許可」）を押します。</p>
+        <div class="fig"><div class="term"><div class="bar"><i style="left:8px;background:#ff5f57"></i><i style="left:22px;background:#febc2e"></i><i style="left:36px;background:#28c840"></i>ターミナル</div><div class="body"><span class="ok2">✅ 設定しました。いまブラウザで東京の業務管理システムが開けば成功です（次回からMacの起動時に開きます）。</span></div></div></div>
+        <span class="ok">「✅ 設定しました」と出て、ブラウザ（Chrome や Safari）で業務管理システムが開く</span></li>
+      <li><b>ターミナルを閉じる</b>
+        <p class="sub">ターミナルの窓の左上の<b>赤い丸</b>を押して閉じます。これで①は終わりです。次からは、Macの電源を入れるたびに業務管理システムが開きます。</p>
+        <div class="tip">「✅ 設定しました」が出ない、赤い字（英語）が出た時は、その画面のまま管理者に見せてください。</div></li>
+    </ol>
+  </div>
+
+  <div class="card"><h2>② 画面（デスクトップ）にアイコンを置く</h2>
+    <p class="sub">業務管理システムを閉じてしまった時に、<b>ダブルクリックするだけで開ける</b>アイコンを作ります（アプリと同じロゴの絵です）。</p>
+    <div class="flow">
+      <div class="box"><span class="zip">ZIP</span>東京業務管理システム.zip</div><span class="arw">➜</span>
+      <div class="box"><img src="icon-180.png" alt="">東京業務管理システム</div><span class="arw">➜</span>
+      <div class="box"><img src="icon-180.png" alt="">デスクトップへ</div>
+    </div>
+    <ol class="steps">
+      <li><b>下の「アイコンをダウンロード」ボタンを押す</b>
+        <a class="dl" href="pc/tokyo-gyomu-mac.zip" download="東京業務管理システム.zip">アイコンをダウンロード</a>
+        <p class="sub">「ダウンロードを許可しますか？」などと聞かれたら「許可」（または「保存」）を押します。</p>
+        <span class="ok">Macの「ダウンロード」フォルダに「東京業務管理システム.zip」が入る</span></li>
+      <li><b>「ダウンロード」フォルダを開く</b>
+        <p class="sub">画面の一番下の Finder（青と白の顔のマーク）を押し、出てきた窓の<b>左側の「ダウンロード」</b>を押します。</p>
+        <div class="fig"><div class="finder"><div class="side">よく使う項目<br>デスクトップ<br>書類<br><span class="on">ダウンロード</span><br>アプリケーション</div>
+          <div class="main"><div class="file"><span class="zip">ZIP</span>東京業務管理<br>システム.zip</div></div></div></div></li>
+      <li><b>「東京業務管理システム.zip」をダブルクリック</b>
+        <div class="fig"><div class="finder"><div class="side">よく使う項目<br>デスクトップ<br>書類<br><span class="on">ダウンロード</span><br>アプリケーション</div>
+          <div class="main"><div class="file"><span class="zip">ZIP</span>東京業務管理<br>システム.zip</div><div class="file"><img src="icon-180.png" alt="" class="mark">東京業務管理<br>システム</div></div></div></div>
+        <span class="ok">すぐ横に、ロゴの絵の「東京業務管理システム」ができる</span></li>
+      <li><b>ロゴの絵の「東京業務管理システム」を、デスクトップへドラッグ</b>
+        <p class="sub">アイコンの上でマウスのボタンを押したまま、画面の背景（窓のない所）まで動かして離します。窓が画面いっぱいで背景が見えない時は、窓を少し動かしてから行います。</p>
+        <span class="ok">画面の背景にロゴのアイコンが置かれる。ダブルクリックすると業務管理システムが開く</span></li>
+    </ol>
+    <p class="sub" style="margin-bottom:0">お好みで：アイコンを画面の一番下（Dock）の<b>ゴミ箱の左側</b>へドラッグすると、1回押すだけで開けるようになります。</p>
+  </div>
 <script>
 document.getElementById('cp').onclick = function () {
   var t = document.getElementById('cmd').textContent, b = this;
