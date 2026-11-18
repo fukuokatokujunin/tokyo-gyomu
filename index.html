@@ -14,7 +14,7 @@
 <meta name="apple-mobile-web-app-title" content="東京徳純院">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="theme-color" content="#1e2533">
-<meta name="build" content="20261117180647">
+<meta name="build" content="20261118103843">
 <style>
   :root { --bg:#f6f7f9; --card:#fff; --ink:#1d2330; --sub:#6b7280; --pri:#2563eb; --ok:#059669; --ng:#dc2626; --warn:#d97706; --line:#e5e7eb; }
   * { box-sizing:border-box; }
@@ -1004,7 +1004,7 @@
               <dt>② 案を確認・修正する</dt><dd>「確定前確認事項」と下の表を見て、直したいマスをタップします。</dd>
               <dt>③ シフトを確定する</dt><dd>ハーモス取込用のCSVファイルを作成し、休み／有休／パート出勤日をGoogleカレンダーに登録します。</dd>
               <dt id="unapproveNote">確定を取り消す</dt><dd>Googleカレンダーに登録した予定を削除し、シフトを「案（未確定）」に戻します。※すでにハーモスにCSVを取り込んでいる場合、ハーモス側の内容は元に戻りません。</dd>
-              <dt>④ ハーモスに取り込む</dt><dd>押すと福岡のMacに取込を依頼します。Macが1分ほどで受け取り、確定シフトのExcelとハーモス取込用CSV（東京ハーモス入YYYYMM.csv）を保存して、Claudeがハーモスに取り込みます。済むと管理者に通知が届きます。控えは「CSV・Excelをこの端末に保存」（ハーモスのログイン画面が出たらログインし、Claudeに確認されたら答えます）。Claudeが起動しない時は、コピーされた依頼文を Claude Code に貼り付けます。取込完了のメールが届いたら⑤で確認します。※ハーモスはシステムから直接シフトを登録できないため、CSVで取り込みます（手作業で取り込んでもかまいません）。</dd>
+              <dt>④ ハーモスに取り込む</dt><dd>押すと福岡のMacに取込を依頼します。Macが1分ほどで受け取り、確定シフトのExcelとハーモス取込用CSV（東京ハーモス入YYYYMM.csv）を保存して、Claudeがハーモスに取り込みます。済むと管理者に通知が届くので、⑤で確認します。しばらくたっても進まない時は福岡に連絡してください。控えは「CSV・Excelをこの端末に保存」。※ハーモスはシステムから直接シフトを登録できないため、CSVで取り込みます（手作業で取り込んでもかまいません）。</dd>
               <dt>⑤ 取り込み結果を確認する</dt><dd>確定シフトとハーモス上のシフトを1日ずつ照らし合わせ、食い違う日を一覧表示します。</dd>
             </dl>
           </details>
@@ -1088,7 +1088,7 @@
         <div class="card">
           <strong>お知らせ（INFO）</strong>
           <span class="sub">打刻画面の上に、休み希望のお知らせの下へ1件ずつ並んで表示されます（全員に表示）。</span>
-          <textarea id="infoText" rows="2" placeholder="例：11/3は全員で宝満山参拝です"></textarea>
+          <textarea id="infoText" rows="2" placeholder="例：12/13（日）は年末大掃除です。全員出勤をお願いします"></textarea>
           <button class="sec" onclick="addInfo()">お知らせを追加</button>
           <div id="infoAdmin"></div>
         </div>
