@@ -14,7 +14,7 @@
 <meta name="apple-mobile-web-app-title" content="東京徳純院">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="theme-color" content="#1e2533">
-<meta name="build" content="20261118114239">
+<meta name="build" content="20261118115836">
 <style>
   :root { --bg:#f6f7f9; --card:#fff; --ink:#1d2330; --sub:#6b7280; --pri:#2563eb; --ok:#059669; --ng:#dc2626; --warn:#d97706; --line:#e5e7eb; }
   * { box-sizing:border-box; }
@@ -148,11 +148,12 @@
   details.foldbox[open] > summary::after { transform:rotate(180deg); }
   details.foldbox .hobody { padding-bottom:18px; } /* 引き継ぎ事項（2026-11-08 業務追加と同じ折りたたみ） */
   details.foldbox .hobody select { margin-top:0; }
-  details.foldbox .newbtns { display:flex; gap:10px; padding-bottom:18px; }
+  details.foldbox .newbtns { display:flex; flex-direction:column; gap:8px; padding-bottom:18px; } /* 2026-11-18 ボタンが3つになったので縦に（文字が途中で改行しないように） */
   details.foldbox .newbtns button { flex:1; min-width:0; margin:0; display:flex; align-items:center; gap:10px; padding:5px 10px 5px 5px; background:#fff; color:#222629;
     border:1px solid #222629; border-radius:0; font-size:13px; font-weight:400; letter-spacing:.1em; text-align:left; line-height:1.4; }
   details.foldbox .newbtns button::before { content:''; flex:none; width:30px; height:30px; background:#222629 no-repeat center / 18px; }
   details.foldbox .newbtns button.req::before { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.8' stroke-linejoin='round'%3E%3Cpath d='M5 3h10l4 4v14H5z'/%3E%3Cpath d='M9 11h6M9 15h6'/%3E%3C/svg%3E"); }
+  details.foldbox .newbtns button.dly::before { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.8' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M19.5 12a7.5 7.5 0 1 1-2.2-5.3'/%3E%3Cpath d='M19.5 4.5v3.5H16'/%3E%3Cpath d='M8.5 12.2l2.4 2.4 4.6-4.8'/%3E%3C/svg%3E"); }
   details.foldbox .newbtns button.jin::before { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.8' stroke-linejoin='round'%3E%3Cpath d='M2 9l10-5 10 5'/%3E%3Cpath d='M5 9v10M19 9v10M3 20h18M10 20v-5h4v5'/%3E%3C/svg%3E"); }
   details.foldbox .newbtns button:active { background:#f0f0f0; transform:translateY(1px); }
   @media (min-width:900px) { details.foldbox .newbtns button.jin { order:-1; } } /* PCは「寺内スケジュールに追加」を左に（2026-11-04） */
@@ -220,10 +221,11 @@
   @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
   h3 { font-weight:500; letter-spacing:.2em; }
   .task h3, .annual h3, .hand h3 { font-size:16px; }
-  #annualBox .head h3::before, #taskBox .head h3::before { display:block; font-family:"Noto Sans JP",sans-serif; font-size:10px; font-weight:500; letter-spacing:.4em; color:var(--sub); margin-bottom:6px; }
+  #annualBox .head h3::before, #taskBox .head h3::before, #dailyBox .head h3::before { display:block; font-family:"Noto Sans JP",sans-serif; font-size:10px; font-weight:500; letter-spacing:.4em; color:var(--sub); margin-bottom:6px; }
   #annualBox .head h3::before { content:'SCHEDULE'; }
   #taskBox .head h3::before { content:'TASKS'; }
-  #annualBox .head, #taskBox .head { padding-bottom:14px; border-bottom:1px solid var(--ink); margin-bottom:8px; }
+  #dailyBox .head h3::before { content:'DAILY'; } /* 日常業務（2026-11-18） */
+  #annualBox .head, :is(#taskBox, #dailyBox) .head { padding-bottom:14px; border-bottom:1px solid var(--ink); margin-bottom:8px; }
   button { border-radius:0; font-weight:400; letter-spacing:.25em; box-shadow:none; transition:opacity .3s ease, background .3s ease; }
   button:hover { opacity:.85; }
   button.in { background:#222629; } button.out { background:#5a3a34; }
@@ -366,8 +368,8 @@
   .pwrow { display:flex; align-items:center; gap:8px; padding:8px 0; border-bottom:1px solid var(--line); } .pwrow button { width:auto; margin:0; padding:6px 14px; font-size:13px; }
   #mailErr { color:var(--ng); } #mailErr:empty { display:none; }
   /* 見出しのボタン：開いている間（依頼した・完了済み・削除済み）と読み込み中（更新）は黒く反転（Ver1.2） */
-  #annualBox .head button.hbtn, #taskBox .head button.hbtn { padding:4px 6px; transition:background .15s, color .15s; }
-  #annualBox .head button.hbtn.on, #taskBox .head button.hbtn.on { background:#222629; color:#fff; border-bottom-color:#222629; opacity:1; }
+  #annualBox .head button.hbtn, :is(#taskBox, #dailyBox) .head button.hbtn { padding:4px 6px; transition:background .15s, color .15s; }
+  #annualBox .head button.hbtn.on, :is(#taskBox, #dailyBox) .head button.hbtn.on { background:#222629; color:#fff; border-bottom-color:#222629; opacity:1; }
   /* 寺内スケジュールの進捗（Ver1.2）：時系列のつながり（左の線と点） */
   button.pp.nt { background:#fff; color:#222629; border:1px solid #222629; margin-left:6px; } button.pp.nt::before { display:none; }
   /* 進捗が書き込まれた予定は「進捗」を薄い青で点灯（2026-11-10 明滅→2026-11-17 点灯に変更） */
@@ -376,17 +378,21 @@
   .annual .titem > div { min-width:0; } /* 最新の書き込みの1行が長くても、行の幅を広げない */
   /* 個別業務の行（2026-11-04）：担当者の名前が長くても本文の幅を広げない（ゴミ箱が枠の外へ押し出されないように）。
      下の段（依頼者・担当・期日・延長・寺内へ・編集）は左端をそろえ、折り返した段も本文と同じ位置から始める */
-  #tasks .titem > div { min-width:0; }
-  #tasks .titem > div > .sub > * { margin:2px 6px 2px 0; } /* 余白は右側に（左側だと折り返した段の先頭がずれる） */
-  #tasks .titem > div > .sub > .rule { margin:4px 0 0; }
+  :is(#tasks, #daily) .titem > div { min-width:0; }
+  :is(#tasks, #daily) .titem > div > .sub > * { margin:2px 6px 2px 0; } /* 余白は右側に（左側だと折り返した段の先頭がずれる） */
+  :is(#tasks, #daily) .titem > div > .sub > .rule { margin:4px 0 0; }
   .titem.pending { opacity:.55; pointer-events:none; } /* 業務追加の登録中（2026-11-08） */
   .pendtag { font-size:12px; color:var(--sub); margin-left:6px; }
-  #tasks .titem.my:not(.alert) { background:#eaf3fb; margin:0 -8px; padding-left:8px; padding-right:8px; } /* マイタスクは薄い青（2026-11-08。期日が来たら赤を優先） */
-  #tasks .titem.alert { padding-left:5px; } /* 赤い線（3px）の分だけ詰めて、□と本文の位置をほかの行とそろえる */
+  .lastdone { display:table; padding:1px 6px; font-size:12px; color:var(--ok); border:1px solid #c7d8cd; background:#f3f8f5; white-space:nowrap; } /* 日常業務の前回完了日（2026-11-18） */
+  .every { display:flex; gap:8px; } .every .tkdate { width:auto; margin:0; } .every input.tkdate { flex:0 0 96px; text-align:center; } .every select.tkdate { flex:1; } /* 日常業務の間隔 */
+  .nextdue { display:inline-block; margin-left:0; } /* 日常業務の次の回 */
+  .lastdone.none { color:var(--sub); border-color:var(--line); background:#f7f7f6; }
+  :is(#tasks, #daily) .titem.my:not(.alert) { background:#eaf3fb; margin:0 -8px; padding-left:8px; padding-right:8px; } /* マイタスクは薄い青（2026-11-08。期日が来たら赤を優先） */
+  :is(#tasks, #daily) .titem.alert { padding-left:5px; } /* 赤い線（3px）の分だけ詰めて、□と本文の位置をほかの行とそろえる */
   /* マイタスク（2026-11-06）：自分から自分だけに依頼した個別業務。行の右上（削除の列の上端）に印。
      チャコールの角に金の細線の内枠、中に「MY」の文字だけ（2026-11-06 人の形をやめた）。どの行も同じ形 */
-  #tasks .trashwrap.mine { align-self:stretch; }
-  #tasks .trashwrap.mine .mytag { margin-bottom:auto; }
+  :is(#tasks, #daily) .trashwrap.mine { align-self:stretch; }
+  :is(#tasks, #daily) .trashwrap.mine .mytag { margin-bottom:auto; }
   .mytag { display:flex; align-items:center; justify-content:center; width:24px; height:24px; background:#222629;
     outline:1px solid #b8d6f0; outline-offset:-3px; }
   .mytag b { font-size:9px; font-weight:600; letter-spacing:.06em; margin-right:-.06em; color:#b8d6f0; line-height:1; font-family:"Noto Sans JP",sans-serif; }
@@ -396,10 +402,10 @@
   .tl .ne .who { font-size:12px; color:var(--sub); } .tl .ne .tx { white-space:pre-wrap; font-size:14px; line-height:1.6; }
   .tl .ne .del { margin-left:8px; font-size:11px; color:var(--ng); cursor:pointer; text-decoration:underline; }
   /* 見出しのボタン（完了済み・削除済みなど）が入りきらない時は、見出しの下の段に右寄せで並べる（Ver1.2） */
-  #annualBox .head, #taskBox .head { flex-wrap:wrap; row-gap:8px; }
-  #annualBox .head > h3, #taskBox .head > h3 { white-space:nowrap; }
-  #annualBox .head > span, #taskBox .head > span { margin-left:auto; }
-  #annualBox .head button.hbtn, #taskBox .head button.hbtn { margin-left:12px; letter-spacing:.12em; }
+  #annualBox .head, :is(#taskBox, #dailyBox) .head { flex-wrap:wrap; row-gap:8px; }
+  #annualBox .head > h3, :is(#taskBox, #dailyBox) .head > h3 { white-space:nowrap; }
+  #annualBox .head > span, :is(#taskBox, #dailyBox) .head > span { margin-left:auto; }
+  #annualBox .head button.hbtn, :is(#taskBox, #dailyBox) .head button.hbtn { margin-left:12px; letter-spacing:.12em; }
   .rqd { padding:10px 0; border-bottom:1px solid var(--line); } .rqd:last-child { border-bottom:0; } .rqd.closed { opacity:.6; }
   .rqd .t { font-size:15px; } .rqd .sub { font-size:12px; margin-top:2px; }
   .rqd .who { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
@@ -476,7 +482,7 @@
     body.mob.tabs.saving #newPop { bottom:calc(156px + env(safe-area-inset-bottom)); }
     body.mob.tabs.saving #dueBar { bottom:calc(208px + env(safe-area-inset-bottom)); }
     /* 選んでいるタブの枠だけ出す（TOP＝home はインフォ・勤務中の枠） */
-    body.mob.tabs #v-clock:not([data-tab=annual]) #annualBox, body.mob.tabs #v-clock:not([data-tab=task]) #taskBox,
+    body.mob.tabs #v-clock:not([data-tab=annual]) #annualBox, body.mob.tabs #v-clock:not([data-tab=task]) #taskBox, body.mob.tabs #v-clock:not([data-tab=daily]) #dailyBox,
     body.mob.tabs #v-clock:not([data-tab=add]) #addBox, body.mob.tabs #v-clock:not([data-tab=ho]) #hoCard,
     body.mob.tabs #v-clock:not([data-tab=home]) #deadline, body.mob.tabs #v-clock:not([data-tab=home]) #infos,
     body.mob.tabs #v-clock:not([data-tab=home]) #pushBox, body.mob.tabs #v-clock:not([data-tab=home]) #instBox, body.mob.tabs #v-clock:not([data-tab=home]):not([data-tab=ho]) #handBox, /* 届いた申し送りはTOPと引き継ぎタブに */
@@ -492,6 +498,16 @@
     body.mob.tabs #addBox .newbtns button { gap:16px; padding:10px 14px 10px 10px; font-size:15px; letter-spacing:.15em; }
     body.mob.tabs #addBox .newbtns button::before { width:46px; height:46px; background-size:24px; }
     body.mob.tabs .btndesc { display:block; margin-top:4px; font-size:11px; color:var(--sub); letter-spacing:.05em; }
+    /* 2段（2026-11-18 日常業務を足して7つになったので）：上の段と下の段をそれぞれ等分して幅いっぱいに並べる（幅は mobBar が決める） */
+    body.mob.tabs #tabbar.two { flex-wrap:wrap; height:auto; }
+    #tabbar.two button, #tabbar.two button.wide { flex:0 0 var(--tw); height:56px; }
+    #tabbar.two button.r2 { box-shadow:inset 0 1px 0 rgba(255,255,255,.08); } /* 段の区切りの細い線 */
+    #tabbar.two button span { letter-spacing:0; }
+    body.mob.tabs.tab2 main { padding-bottom:170px; }
+    body.mob.tabs.tab2 #newPop, body.mob.tabs.tab2 #saveBar { bottom:calc(148px + env(safe-area-inset-bottom)); }
+    body.mob.tabs.tab2 #dueBar { bottom:calc(200px + env(safe-area-inset-bottom)); }
+    body.mob.tabs.tab2.saving #newPop { bottom:calc(202px + env(safe-area-inset-bottom)); }
+    body.mob.tabs.tab2.saving #dueBar { bottom:calc(254px + env(safe-area-inset-bottom)); }
   }
   @media (max-width:360px) { #tabbar button { font-size:9px; letter-spacing:0; } #tabbar svg { width:21px; height:21px; } }
   /* ===== 予定カレンダー（2026-11-11）：寺内スケジュール＝藍、個別業務＝代赭（たいしゃ）。行事は藍の枠だけ ===== */
@@ -700,23 +716,14 @@
         <button class="out" onclick="clockOut()">チェックして退勤</button>
         <p class="sub center">今日もお疲れ様でした！</p>
       </div>
-      <!-- 予定カレンダー（2026-11-11）：勤務中の枠の下。寺内スケジュールと個別業務の期日を月・週で見る（PC・スマホのTOP） -->
-      <div class="card" id="calBox">
-        <div class="calhead"><h3>予定カレンダー</h3>
-          <div class="calmode"><button data-m="month" onclick="scMode('month')">月</button><button data-m="week" onclick="scMode('week')">週</button></div></div>
-        <div class="calnav"><button class="arw" onclick="scMove(-1)" aria-label="前へ">‹</button><b id="calTitle"></b><button class="arw" onclick="scMove(1)" aria-label="次へ">›</button><button class="tdy" onclick="scToday()">今日</button></div>
-        <div class="callegend"><span class="an">寺内スケジュール</span><span class="tk">個別業務</span></div>
-        <div id="calBody"></div>
-        <div id="calDay" class="hidden"></div>
-        <p class="sub calnote">寺内スケジュールは3か月先までの予定を表示しています。開始日のある予定は開始日から期日まで帯で表示します。「選択」で一覧のその項目へ移動します</p>
-      </div>
-
+      <!-- 業務追加・引き継ぎ事項（2026-11-18 福岡と同じく、勤務中の枠の下・予定カレンダーの上へ移した） -->
       <details class="card foldbox hidden" id="addBox">
         <summary>業務追加</summary>
         <div class="mobhead"><h3 data-en="ADD">業務追加</h3></div>
         <div class="newbtns">
           <button class="req" onclick="openRequest()"><span><span class="nw">個別業務</span><span class="nw">を依頼</span><small class="btndesc">自分や他の人にお願いする</small></span></button>
           <button class="jin" onclick="openJinaiAdd()"><span><span class="nw">寺内スケジュール</span><span class="nw">に追加</span><small class="btndesc">みんなで進める予定を登録する</small></span></button>
+          <button class="dly" onclick="openRequest('daily')"><span><span class="nw">日常業務</span><span class="nw">に追加</span><small class="btndesc">日々の業務を登録する（全員で共有）</small></span></button>
         </div>
       </details>
       <!-- 引き継ぎ事項（2026-11-08 退勤前チェックから独立。業務追加と同じ折りたたみ。PC・スマホとも業務追加の下） -->
@@ -731,13 +738,33 @@
           <button id="hoBtn" onclick="sendHandover()">引き継ぎを送信</button>
         </div>
       </details>
+      <!-- 予定カレンダー（2026-11-11）：勤務中の枠の下。寺内スケジュールと個別業務の期日を月・週で見る（PC・スマホのTOP） -->
+      <div class="card" id="calBox">
+        <div class="calhead"><h3>予定カレンダー</h3>
+          <div class="calmode"><button data-m="month" onclick="scMode('month')">月</button><button data-m="week" onclick="scMode('week')">週</button></div></div>
+        <div class="calnav"><button class="arw" onclick="scMove(-1)" aria-label="前へ">‹</button><b id="calTitle"></b><button class="arw" onclick="scMove(1)" aria-label="次へ">›</button><button class="tdy" onclick="scToday()">今日</button></div>
+        <div class="callegend"><span class="an">寺内スケジュール</span><span class="tk">個別業務</span></div>
+        <div id="calBody"></div>
+        <div id="calDay" class="hidden"></div>
+        <p class="sub calnote">寺内スケジュールは3か月先までの予定を表示しています。開始日のある予定は開始日から期日まで帯で表示します。「選択」で一覧のその項目へ移動します</p>
+      </div>
+      <!-- 日常業務（2026-11-18）：個別業務と同じ形。担当はなく全員で共有。前回完了日を出す。1週間以上先の期日は折りたたみ。PCは予定カレンダーの下、スマホは下部タブ -->
+      <div class="card task hidden" id="dailyBox">
+        <div class="head"><h3>日常業務 <span class="sub" id="dailyCount"></span></h3>
+          <span><button class="hbtn" data-box="dailyDoneBox" onclick="toggleDone('daily')">完了済み</button><button class="hbtn" data-box="dailyRmBox" onclick="toggleRemoved('daily')">削除済み</button><button class="hbtn" id="dailyReload" onclick="reloadTasks('daily')">更新</button></span></div>
+        <div class="donebox hidden" id="dailyDoneBox"><b>完了済み（7日間）</b><div id="dailyDone"></div></div>
+        <div class="donebox hidden" id="dailyRmBox"><b>削除済み（7日間）</b><div id="dailyRm"></div></div>
+        <div id="daily"></div>
+      </div>
       <div class="overlay hidden" id="rqBox">
         <div class="modal" style="max-height:90vh;overflow-y:auto">
-          <strong>個別業務を依頼</strong>
+          <strong id="rqHead">個別業務を依頼</strong>
+          <p class="sub hidden" id="rqDailyNote" style="margin:4px 0 6px">日常業務は期日を決めず、選んだ間隔でくり返す定期業務です。担当はなく全員の画面に出ます。だれかが完了すると全員の画面で済みになり、その日から数えて次の回になります</p>
           <label for="rqText" class="tklabel">内容</label>
           <textarea id="rqText" rows="3" maxlength="200"></textarea>
-          <span class="tklabel">担当 <small class="sub">（複数可）</small></span>
-          <div class="whos" id="rqWho"></div>
+          <div id="rqWhoWrap"><span class="tklabel">担当 <small class="sub">（複数可）</small></span>
+          <div class="whos" id="rqWho"></div></div>
+          <div id="rqDateWrap">
           <label for="rqStart" class="tklabel"><span class="ico-start"></span>開始日 <small class="sub">（なくても可。期日の1か月前まで。入れると開始日から期日まで一覧の上の方に出ます）</small></label>
           <input type="date" id="rqStart" class="tkdate">
           <label for="rqDue" class="tklabel"><span class="ico-due"></span>期日 <small class="sub">（必須）</small></label>
@@ -749,6 +776,12 @@
             <option value="MN">毎月（期日と同じ「第○ ○曜日」）</option><option value="Y">毎年（期日と同じ月日）</option>
           </select>
           <div class="hidden" id="rqDaysWrap"><span class="tklabel">曜日（複数可）</span><div class="whos" id="rqDays"></div></div>
+          </div>
+          <div class="hidden" id="rqEveryWrap"><!-- 日常業務の間隔（2026-11-18） -->
+            <label for="rqEveryN" class="tklabel"><span class="rep"></span>間隔 <small class="sub">（完了した日から数えて、次の回が出ます）</small></label>
+            <div class="every"><input type="number" id="rqEveryN" class="tkdate" min="1" max="365" step="1" inputmode="numeric" value="1">
+              <select id="rqEveryU" class="tkdate"><option value="D">日ごと</option><option value="W">週間ごと</option><option value="M">ヶ月ごと</option></select></div>
+          </div>
           <button onclick="doRequest()">登録</button>
           <button class="ghost" onclick="$('rqBox').classList.add('hidden')">キャンセル</button>
         </div>
@@ -847,12 +880,19 @@
           <p class="sub" id="edNote" style="margin:4px 0 6px"></p>
           <textarea id="edText" rows="3" maxlength="200"></textarea>
           <p class="sub" id="edFrom" style="margin:4px 0 0"></p>
+          <div id="edDateWrap">
           <label for="edDate" class="tklabel"><span class="ico-due"></span>期日</label>
           <input type="date" id="edDate" class="tkdate" onchange="edRepHint(); edStartRange()">
           <p class="sub" id="edDateNote" style="margin:4px 0 0"></p>
           <label for="edStart" class="tklabel"><span class="ico-start"></span>開始日 <small class="sub">（なくても可。期日の1か月前まで。空にすると開始日なし）</small></label><!-- 編集の窓から開始日（2026-11-15） -->
           <input type="date" id="edStart" class="tkdate">
           <p class="sub" id="edStartNote" style="margin:4px 0 0"></p>
+          </div>
+          <div class="hidden" id="edEveryWrap"><!-- 日常業務の間隔（2026-11-18） -->
+            <label for="edEveryN" class="tklabel"><span class="rep"></span>間隔 <small class="sub">（完了した日から数えて、次の回が出ます）</small></label>
+            <div class="every"><input type="number" id="edEveryN" class="tkdate" min="1" max="365" step="1" inputmode="numeric" value="1">
+              <select id="edEveryU" class="tkdate"><option value="D">日ごと</option><option value="W">週間ごと</option><option value="M">ヶ月ごと</option></select></div>
+          </div>
           <div class="hidden" id="edWhoWrap"><!-- 個別業務の担当の付け外し（2026-11-06） -->
             <span class="tklabel">担当 <small class="sub">（外すとその人の個別業務から消えます。足した人には新着で届きます）</small></span>
             <div class="whos" id="edWho"></div>
@@ -1150,6 +1190,7 @@
   <button data-t="home" onclick="mobTap('home')"><svg viewBox="0 0 24 24"><path d="M4 10.5L12 4l8 6.5V20H4z"/><path d="M10 20v-5.5h4V20"/></svg><span>ホーム</span></button><!-- TOPへ（2026-11-11） -->
   <button data-t="task" onclick="mobTap('task')"><svg viewBox="0 0 24 24"><path d="M3.5 6.5l1.5 1.5 2.5-3M3.5 12.5l1.5 1.5 2.5-3M3.5 18.5l1.5 1.5 2.5-3M11 7h9.5M11 13h9.5M11 19h9.5"/></svg><span>個別業務</span><i></i></button>
   <button data-t="annual" class="wide" onclick="mobTap('annual')"><svg viewBox="0 0 24 24"><path d="M2 9l10-5 10 5M5 9v10M19 9v10M3 20h18M10 20v-5h4v5"/></svg><span>寺内スケジュール</span><i></i></button>
+  <button data-t="daily" onclick="mobTap('daily')"><svg viewBox="0 0 24 24"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3"/><path d="M19.5 4.5v3.5H16"/><path d="M8.5 12.2l2.4 2.4 4.6-4.8"/></svg><span>日常業務</span><i></i></button><!-- 2026-11-18 -->
   <button data-t="add" onclick="mobTap('add')"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16"/><path d="M12 8.5v7M8.5 12h7"/></svg><span>業務追加</span></button><!-- 引き継ぎの左へ（2026-11-11） -->
   <button data-t="ho" onclick="mobTap('ho')"><svg viewBox="0 0 24 24"><path d="M3.5 4.5h17v11.5H9l-5.5 4z"/><path d="M8.5 10.5h7M12.5 7.5l3 3-3 3"/></svg><span>引き継ぎ</span><i></i></button>
   <button data-t="admin" onclick="mobTap('admin')"><svg viewBox="0 0 24 24"><path d="M3.5 7h10M18.5 7h2M3.5 17h3M10.5 17h10"/><circle cx="16" cy="7" r="2.5"/><circle cx="8.5" cy="17" r="2.5"/></svg><span>管理</span></button>
@@ -1184,7 +1225,7 @@ function openPre(on) {
 let dueMode = false; // 退勤前に期日の項目を片付けている最中（全部済むまで知らせ続ける）
 function dueItems() {
   const today = ymd(new Date());
-  const tasks = (showTasks() ? me.tasks || [] : []).filter(t => t.due && t.due <= today).map(t => ({ kind: '個別業務', text: t.text, date: t.due, sel: `#tasks [data-id="${t.id}"]` }));
+  const tasks = (showTasks() ? me.tasks || [] : []).filter(t => !t.daily && t.due && t.due <= today).map(t => ({ kind: '個別業務', text: t.text, date: t.due, sel: taskSel(t.id) })); // 日常業務は入れない（2026-11-18 ユーザー指定）
   const ann = (me.annual || []).filter(a => !a.event && a.left <= 0).map(a => ({ kind: '寺内スケジュール', text: a.text, date: a.date, sel: `#annual [data-aid="${a.id}"]` }));
   return tasks.concat(ann);
 }
@@ -1410,6 +1451,7 @@ function render(s) {
   $('main').classList.toggle('split', cur === 'clock');
   $('main').classList.toggle('three', cur === 'clock' && showTasks());
   $('taskBox').classList.toggle('hidden', !showTasks());
+  $('dailyBox').classList.toggle('hidden', !showTasks()); // 日常業務（2026-11-18）
   $('addBox').classList.toggle('hidden', !showTasks()); // 業務追加（2026-11-04）
   drawNew(me.tasks || []);
   drawTasks(s.tasks);
@@ -1471,7 +1513,7 @@ if (MOB_TABS) document.body.classList.add('mob');
 function mobOn() { return MOB_TABS && document.body.classList.contains('tabs'); }
 function mobAvail(t) {
   if (!me) return false;
-  if (t === 'add' || t === 'task') return showTasks();
+  if (t === 'add' || t === 'task' || t === 'daily') return showTasks(); // daily＝日常業務（2026-11-18）
   if (t === 'ho') return !!(me.working || me.noAttend || (me.handovers || []).length); // 引き継ぎは勤務中・シフト対象外の人（届いた申し送りがあれば勤務外でも開ける）
   if (t === 'admin') return !!me.admin;
   return true;
@@ -1490,8 +1532,8 @@ function mobGo(t) {
 /** 移動先（個別業務の行・申し送りなど）が入っているタブを開く */
 function mobShow(el) {
   if (!mobOn() || !el) return;
-  const p = el.closest('#taskBox, #annualBox, #addBox, #hoCard');
-  const t = p ? { taskBox: 'task', annualBox: 'annual', addBox: 'add', hoCard: 'ho' }[p.id] : 'home';
+  const p = el.closest('#taskBox, #dailyBox, #annualBox, #addBox, #hoCard');
+  const t = p ? { taskBox: 'task', dailyBox: 'daily', annualBox: 'annual', addBox: 'add', hoCard: 'ho' }[p.id] : 'home';
   if (cur !== 'clock' || t !== mobTab) mobGo(t);
 }
 /** タブの表示（使えるタブ・選んでいるタブ・件数の印）。描き直しのたびに呼ぶ */
@@ -1505,21 +1547,32 @@ function mobBar() {
   // 印（2026-11-11）：赤＝新着・期日が来た分・届いた申し送り（明滅）、金＝期日が近い分だけの時。数字は両方の合計。
   // 期日が近い＝1週間以内（繰り返しも含む）。画面の期日の枠（黄・赤）と同じ数え方（2週間以内・毎日毎週を除く数え方は画面と数が合わないのでやめた）
   const wk = ymd(new Date(new Date(today + 'T00:00:00').getTime() + 7 * 864e5));
-  const tk = showTasks() ? (me.tasks || []).filter(x => !String(x.id).startsWith('tmp-')) : [];
+  const all = showTasks() ? (me.tasks || []).filter(x => !String(x.id).startsWith('tmp-')) : [];
+  const tk = all.filter(x => !x.daily), dl = all.filter(x => x.daily); // 日常業務は別のタブ（2026-11-18）
   const tkHot = tk.filter(x => x.isNew || (x.due && x.due <= today)).length;
   const an = (me.annual || []).filter(a => !a.event && !String(a.id).startsWith('tmp-'));
   const badge = {
     task: { n: tk.filter(x => x.isNew || (x.due && x.due <= wk)).length, hot: tkHot > 0 },
+    daily: { n: dl.filter(x => x.due && x.due <= today).length, hot: true }, // 日常業務は次の回が来た分だけ（2026-11-18）
     annual: { n: an.filter(a => a.left <= 7).length, hot: an.some(a => a.left <= 0) }, // 1週間以内（期日が来た分は赤）
     ho: { n: (me.handovers || []).length, hot: true }, // 届いた申し送り
   };
   document.querySelectorAll('#tabbar button').forEach(b => {
     const t = b.dataset.t;
-    b.classList.toggle('hidden', (t === 'add' || t === 'task' || t === 'admin') && !mobAvail(t));
+    b.classList.toggle('hidden', (t === 'add' || t === 'task' || t === 'daily' || t === 'admin') && !mobAvail(t));
     b.classList.toggle('off', t === 'ho' && !mobAvail(t));
     b.classList.toggle('on', t === 'admin' ? cur === 'admin' : cur === 'clock' && t === mobTab);
     const i = b.querySelector('i'), x = badge[t];
     if (i) { i.textContent = x && x.n ? (x.n > 99 ? '99+' : x.n) : ''; i.className = x && x.n ? (x.hot ? 'pulse' : 'warn') : ''; }
+  });
+  // 6つ以上は2段（2026-11-18）：上の段は4つ（ホーム・個別業務・寺内スケジュール・日常業務。日常業務を寺内スケジュールの横に）、
+  //  下の段に残り（業務追加・引き継ぎ・管理）。どちらの段も幅いっぱいに等分して、すき間を作らない
+  const vis = [...document.querySelectorAll('#tabbar button')].filter(b => !b.classList.contains('hidden'));
+  const two = vis.length >= 6, top = 4;
+  $('tabbar').classList.toggle('two', two); document.body.classList.toggle('tab2', two);
+  vis.forEach((b, k) => {
+    b.classList.toggle('r2', two && k >= top);
+    b.style.setProperty('--tw', two ? `calc(100% / ${k < top ? top : vis.length - top})` : '');
   });
 }
 // 改修を公開したら、ホーム画面アプリでも自動で新しい画面に切り替える。
@@ -1604,6 +1657,7 @@ function openOnly(id) {
 /* ---- 完了済み（7日間。チェックで未完に戻す） ---- */
 const DONE = {
   tasks: { list: 'doneTasks', undo: 'undoTask', after: r => { drawTasks(r.tasks); drawDone('tasks', r.done); } },
+  daily: { list: 'doneTasks', undo: 'undoTask', after: r => { drawTasks(r.tasks); drawDone('daily', r.done); } }, // 日常業務（2026-11-18。同じ一覧から区分で分ける）
   annual: { list: 'annualDone', undo: 'undoAnnual', after: r => { drawAnnual(r.annual); drawDone('annual', r.done); } },
 };
 /* 依頼した個別業務（Ver1.2）：自分が他の人に頼んだ分と、担当者ごとの状態（未確認・確認済み・完了など）。見るだけ */
@@ -1642,6 +1696,7 @@ async function toggleDone(kind) {
 /* ---- 削除済み（以降不要・ゴミ箱で消したもの。7日間は「戻す」で元に戻せる。Ver1.2） ---- */
 const REMOVED = {
   tasks: { list: 'removedTasks', restore: 'restoreTask', after: r => { drawTasks(r.tasks); drawRemoved('tasks', r.removed); } },
+  daily: { list: 'removedTasks', restore: 'restoreTask', after: r => { drawTasks(r.tasks); drawRemoved('daily', r.removed); } },
   annual: { list: 'annualRemoved', restore: 'restoreAnnual', after: r => { drawAnnual(r.annual); drawRemoved('annual', r.removed); if (r.tasks && showTasks()) drawTasks(r.tasks); } },
 };
 async function toggleRemoved(kind) {
@@ -1651,11 +1706,15 @@ async function toggleRemoved(kind) {
   $(kind + 'Rm').innerHTML = '<p class="sub">読み込み中…</p>';
   try { await saveQueue; drawRemoved(kind, await call(REMOVED[kind].list)); } catch (e) { $(kind + 'Rm').innerHTML = ''; }
 }
+/** 個別業務と日常業務は同じ一覧で届くので、区分で分ける（2026-11-18） */
+function byCat(kind, list) { return kind === 'tasks' || kind === 'daily' ? (list || []).filter(a => !!a.daily === (kind === 'daily')) : list; }
 function refreshRemoved(kind) {
+  if (kind === 'tasks') refreshRemoved('daily');
   if ($(kind + 'RmBox').classList.contains('hidden')) return;
   rawCall(REMOVED[kind].list, auth).then(list => drawRemoved(kind, list)).catch(() => {});
 }
 function drawRemoved(kind, list) {
+  list = byCat(kind, list);
   const box = $(kind + 'Rm');
   box.innerHTML = list.length ? '' : '<p class="sub">削除したものはありません</p>';
   list.forEach(a => {
@@ -1669,7 +1728,7 @@ function drawRemoved(kind, list) {
     if (a.date) m.append(`　毎年 ${a.date}`);
     const b = document.createElement('button'); b.className = 'pp st'; b.textContent = '戻す';
     b.onclick = async () => {
-      if (!await ask(kind === 'annual' ? 'この予定を元に戻しますか？（また表示されます）' : 'この個別業務を元に戻しますか？')) return;
+      if (!await ask(kind === 'annual' ? 'この予定を元に戻しますか？（また表示されます）' : kind === 'daily' ? 'この日常業務を元に戻しますか？（全員の画面に戻ります）' : 'この個別業務を元に戻しますか？')) return;
       busy(true);
       try { await saveQueue; REMOVED[kind].after(await call(REMOVED[kind].restore, { id: a.id })); show('元に戻しました'); }
       finally { busy(false); }
@@ -1678,10 +1737,12 @@ function drawRemoved(kind, list) {
   });
 }
 function refreshDone(kind) {
+  if (kind === 'tasks') refreshDone('daily');
   if ($(kind + 'DoneBox').classList.contains('hidden')) return;
   rawCall(DONE[kind].list, auth).then(l => drawDone(kind, l)).catch(() => {});
 }
 function drawDone(kind, list) {
+  list = byCat(kind, list);
   const box = $(kind + 'Done');
   box.innerHTML = list.length ? '' : '<p class="sub">完了済みはありません</p>';
   list.forEach(a => {
@@ -1887,15 +1948,18 @@ function openTaskEdit(t) {
   if (String(t.id).startsWith('tmp-')) { show('保存が終わってから操作してください', true); return; }
   edCur = t; edKind = 'task';
   const mates = nbs(t.mates);
-  $('edNote').textContent = 'この個別業務の内容を直します。' + (mates ? `同じ依頼の ${mates} の分も同じ内容になります。` : '');
+  $('edNote').textContent = t.daily ? 'この日常業務の内容を直します。全員の画面がこの内容になります。' // 2026-11-18
+    : 'この個別業務の内容を直します。' + (mates ? `同じ依頼の ${mates} の分も同じ内容になります。` : '');
   $('edText').value = t.text; $('edFrom').textContent = '';
   edSetDate(t.due || '');
   $('edStart').value = t.start || ''; edStartRange();
   $('edStartNote').textContent = '開始日から期日まで一覧の上の方に出ます。' + (mates ? `同じ依頼の ${mates} の分も同じ開始日になります。` : '');
   $('edRepWrap').classList.add('hidden');
+  $('edDateWrap').classList.toggle('hidden', !!t.daily); $('edEveryWrap').classList.toggle('hidden', !t.daily); // 日常業務は期日の代わりに間隔（2026-11-18）
+  if (t.daily) setEvery('ed', t.rule);
   $('edDateNote').textContent = '期日そのものを直します（今回だけずらす時は「延長」）。空にすると期日なし。' + (mates ? `同じ依頼の ${mates} の分も同じ期日になります。` : '');
   // 担当の付け外し（2026-11-06）。寺内スケジュールから追加した分は1人ずつなので出さない
-  const who = t.from !== '寺内スケジュール' && (me.taskPeople || []).length > 1;
+  const who = !t.daily && t.from !== '寺内スケジュール' && (me.taskPeople || []).length > 1; // 日常業務には担当がない（2026-11-18）
   $('edWhoWrap').classList.toggle('hidden', !who);
   $('edWho').innerHTML = '';
   if (who) {
@@ -1917,6 +1981,7 @@ function edWhoIds() {
 }
 function openEdit(a) {
   edCur = a; edKind = 'annual';
+  $('edDateWrap').classList.remove('hidden'); $('edEveryWrap').classList.add('hidden');
   $('edNote').textContent = '古くなった書き方を、今に合った表現に直します。全員の画面と、来年以降の予定もこの内容になります。';
   edSetDate(a.date);
   $('edDateNote').textContent = a.cycle ? `期日を変えると、この日から数え直します（今回だけずらす時は「延長」）`
@@ -1955,6 +2020,18 @@ async function saveEdit() {
   const before = [Number(auth.id)].concat((a.mateIds || []).map(Number));
   const added = ids ? ids.filter(x => !before.includes(x)).map(nameOf) : [], dropped = ids ? before.filter(x => !ids.includes(x)).map(nameOf) : [];
   if (dropped.length && !await ask(`${nbs(dropped)} を担当から外しますか？（外した人の個別業務から消えます。7日間は「削除済み」から戻せます）`)) return;
+  if (edKind === 'task' && a.daily) { // 日常業務：内容と間隔（2026-11-18）。間隔を変えたら次の回を前回完了した日から数え直す
+    const ev = everyOf('ed');
+    if (!ev) { alert('間隔は1〜365の数を入れてください'); return; }
+    $('edBox').classList.add('hidden');
+    const evChanged = ev.rule !== a.rule;
+    if (text === a.text && !evChanged) return;
+    const due = evChanged && a.lastDone ? everyNext(ev.rule, a.lastDone) : a.due;
+    drawTasks(sortTasks(me.tasks.map(x => x.id === a.id ? Object.assign({}, x, { text, due, rule: ev.rule, ruleLabel: ruleLabel(ev.rule), repeat: true }) : x)));
+    saveLater('tasks', 'editTask', Object.assign({ id: a.id, text }, evChanged ? { every: { n: ev.n, u: ev.u } } : {}));
+    show(`${[text !== a.text && '内容', evChanged && '間隔'].filter(Boolean).join('・')}を直しました（全員の画面に反映されます）`);
+    return;
+  }
   $('edBox').classList.add('hidden');
   const rep = edKind === 'annual' ? $('edRep').value : '', repChanged = edKind === 'annual' && rep !== edRep0;
   if (text === a.text && !dateChanged && !repChanged && !ids && !startChanged) return;
@@ -2046,7 +2123,7 @@ function morningCheck() {
 let nearDay = '';
 function nearItems(list, today) {
   const t0 = new Date(today + 'T00:00:00');
-  return (list || []).filter(t => t.due && !String(t.id).startsWith('tmp-') && !/^(D|WD|W:)/.test(t.rule || ''))
+  return (list || []).filter(t => t.due && !t.daily && !String(t.id).startsWith('tmp-') && !/^(D|WD|W:)/.test(t.rule || '')) // 日常業務は期日がないので出さない（2026-11-18）
     .map(t => ({ t, left: Math.round((new Date(t.due + 'T00:00:00') - t0) / 864e5) }))
     .filter(x => x.left <= 14);
 }
@@ -2079,8 +2156,8 @@ function nearCheck() {
     const txt = document.createElement('div'); txt.className = 't'; txt.append(linked(x.t.text));
     const meta = document.createElement('div'); meta.className = 'sub';
     meta.textContent = `期日 ${m}/${d}` + (x.t.from && x.t.from !== me.name ? `　${x.t.from === '寺内スケジュール' ? '寺内スケジュールから' : nb(x.t.from) + 'より'}` : '');
-    const b = document.createElement('button'); b.textContent = 'この個別業務へ移動';
-    b.onclick = () => { $('nearBox').classList.add('hidden'); jumpTo(`#tasks [data-id="${x.t.id}"]`); };
+    const b = document.createElement('button'); b.textContent = `この${tw(x.t)}へ移動`;
+    b.onclick = () => { $('nearBox').classList.add('hidden'); jumpTo(taskSel(x.t.id)); };
     div.append(head, txt, meta, b); $('nearList').appendChild(div);
   });
   $('nearBox').classList.remove('hidden');
@@ -2137,10 +2214,23 @@ const ymd = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')
 function drawTasks(list) {
   me.tasks = list;
   saveSnap(me); // 完了・延長したものが次に開いた時に一瞬戻って見えないように
-  $('taskCount').textContent = list.length ? `${list.length}件` : '';
   mobBar(); // スマホの下部タブの件数の印（2026-11-11）
-  $('tasks').innerHTML = list.length ? '' : '<p class="sub">未完了の個別業務はありません</p>';
   const today = ymd(new Date());
+  // 日常業務（2026-11-18）：同じ一覧で届き、区分（daily）で別の枠に出す
+  drawTaskList(list.filter(t => !t.daily), false, today);
+  drawTaskList(list.filter(t => t.daily), true, today);
+  scDraw(); // 予定カレンダー（2026-11-11）
+  drawNew(list);
+  if (typeof dueMode !== 'undefined' && dueMode) setTimeout(refreshDue, 0);
+}
+/** 個別業務・日常業務の言い方と、一覧の行の場所 */
+function tw(t) { return t && t.daily ? '日常業務' : '個別業務'; }
+function taskSel(id) { return `#tasks [data-id="${id}"], #daily [data-id="${id}"]`; }
+/** 個別業務（daily＝false）か日常業務（true）の一覧を描く。日常業務は担当がなく（依頼者・担当・MYは出さない）、前回完了日を出し、1週間以上先は折りたたむ */
+function drawTaskList(list, daily, today) {
+  const box = $(daily ? 'daily' : 'tasks');
+  $(daily ? 'dailyCount' : 'taskCount').textContent = list.length ? `${list.length}件` : '';
+  box.innerHTML = list.length ? '' : `<p class="sub">未完了の${daily ? '日常業務' : '個別業務'}はありません</p>`;
   const near = [], far = [];
   periodFirst(list, today).forEach(t => { // 開始日から期日までの分を上へ（2026-11-11）
     let left = null;
@@ -2152,17 +2242,27 @@ function drawTasks(list) {
     const txt = document.createElement('div'); txt.className = 't' + (t.repeat ? ' rep' : ''); txt.append(linked(t.text));
     const meta = document.createElement('div'); meta.className = 'sub';
     // マイタスク（2026-11-06）：自分から自分だけへの依頼（登録者が自分で、複数あての依頼でない）。右上に印を出し「○○より」は出さない
-    const isMy = !!t.from && t.from === me.name && !t.multi && !(t.mates || []).length;
+    const isMy = !daily && !!t.from && t.from === me.name && !t.multi && !(t.mates || []).length;
     if (isMy) row.classList.add('my');
     if (String(t.id).startsWith('tmp-')) { row.classList.add('pending'); meta.appendChild(pendingTag()); } // 登録中（2026-11-08）
-    if (t.from === '寺内スケジュール') meta.textContent = '寺内スケジュールから';
+    if (daily) { // 前回完了日（2026-11-18）：だれかが完了した一番新しい日と、完了した人
+      const ld = document.createElement('span'); ld.className = 'lastdone' + (t.lastDone ? '' : ' none');
+      ld.textContent = t.lastDone ? `前回完了 ${mdOf(t.lastDone)}` + (t.lastBy ? `（${t.lastBy}）` : '') : '前回完了 なし';
+      meta.appendChild(ld);
+    } else if (t.from === '寺内スケジュール') meta.textContent = '寺内スケジュールから';
     else if (t.from && !isMy) meta.appendChild(pn(`${t.from}より`));
     if ((t.mates || []).length) { // 複数あての依頼：担当者（2026-11-04。別の行にせず、依頼者と同じ行に。名前ごとに改行しない）
       const w = document.createElement('span'); w.className = 'mates'; w.append('担当 ');
       ['あなた'].concat(t.mates).forEach((n, k) => { if (k) w.append('・'); w.appendChild(pn(n)); });
       meta.appendChild(w);
     }
-    if (t.due) {
+    if (t.due && daily) { // 日常業務（2026-11-18）：期日ではなく「次の回」。過ぎた分だけ赤、今日は黄
+      left = Math.round((new Date(t.due + 'T00:00:00') - new Date(today + 'T00:00:00')) / 864e5);
+      if (left >= 0) row.classList.remove('alert');
+      const b = document.createElement('span'); b.className = 'due nextdue' + (left < 0 ? ' over' : left === 0 ? ' soon' : '');
+      b.textContent = `次回 ${mdOf(t.due)}` + (left < 0 ? `（${-left}日経過）` : left === 0 ? '（今日）' : `（あと${left}日）`);
+      meta.appendChild(b);
+    } else if (t.due) {
       const [, m, d] = t.due.split('-').map(Number);
       left = Math.round((new Date(t.due + 'T00:00:00') - new Date(today + 'T00:00:00')) / 864e5);
       const b = document.createElement('span');
@@ -2171,10 +2271,12 @@ function drawTasks(list) {
       if (t.start) meta.appendChild(periodTag(t.start, t.due, today)); // 開始日（2026-11-11）
       meta.appendChild(b);
     }
-    meta.appendChild(ppButton(() => openPostpone('task', t, t.due)));
-    const mv = document.createElement('button'); mv.className = 'pp mv'; mv.textContent = '寺内へ';
-    mv.onclick = ev => { ev.preventDefault(); ev.stopPropagation(); openTaskToAnnual(t); }; // 行はlabelなのでチェックが入らないように
-    meta.appendChild(mv);
+    if (!daily) meta.appendChild(ppButton(() => openPostpone('task', t, t.due))); // 日常業務は延長しない（期日がないため。2026-11-18）
+    if (!daily) { // 日常業務は寺内スケジュールへ移さない（2026-11-18）
+      const mv = document.createElement('button'); mv.className = 'pp mv'; mv.textContent = '寺内へ';
+      mv.onclick = ev => { ev.preventDefault(); ev.stopPropagation(); openTaskToAnnual(t); }; // 行はlabelなのでチェックが入らないように
+      meta.appendChild(mv);
+    }
     const eb = document.createElement('button'); eb.className = 'pp nt'; eb.textContent = '編集';
     eb.onclick = ev => { ev.preventDefault(); ev.stopPropagation(); openTaskEdit(t); };
     meta.appendChild(eb);
@@ -2191,12 +2293,10 @@ function drawTasks(list) {
       const cap = document.createElement('small'); cap.textContent = '削除';
       wrap.append(cap, del); row.appendChild(wrap);
     }
-    (left !== null && left > 3 && !inPeriod(t.start, t.due, today) ? far : near).push(row); // 期日なし・超過・3日以内・開始日を過ぎた分は常に表示
+    // 期日なし・超過・3日以内（日常業務は6日以内）・開始日を過ぎた分は常に表示。日常業務は1週間以上先を折りたたむ（2026-11-18）
+    (left !== null && left > (daily ? 6 : 3) && !inPeriod(t.start, t.due, today) ? far : near).push(row);
   });
-  foldRows($('tasks'), near, far, '4日以降先の個別業務', 'tasks');
-  scDraw(); // 予定カレンダー（2026-11-11）
-  drawNew(list);
-  if (typeof dueMode !== 'undefined' && dueMode) setTimeout(refreshDue, 0);
+  foldRows(box, near, far, daily ? '1週間以上先の日常業務' : '4日以降先の個別業務', daily ? 'daily' : 'tasks');
 }
 
 /* ---- 予定カレンダー（2026-11-11）：勤務中の枠の下に、寺内スケジュール（藍）と個別業務（代赭）の期日を月・週で表示 ----
@@ -2227,10 +2327,10 @@ function scItems() {
     });
   });
   if (me && showTasks()) (me.tasks || []).forEach(t => {
-    if (!t.due) return;
+    if (!t.due || t.daily) return; // 日常業務はカレンダーに出さない（2026-11-18）
     const same = (t.annualId && byId[t.annualId + '|' + t.due]) || (t.from === '寺内スケジュール' && byNorm[scNorm(t.text) + '|' + t.due]);
     if (same) { same.both = true; return; } // 寺内スケジュールと同じ予定（着手して個別業務にも入れた分）
-    add({ kind: 'tk', text: t.text, evt: false, sel: `#tasks [data-id="${t.id}"]`, start: t.start || '', end: t.due });
+    add({ kind: 'tk', text: t.text, evt: false, sel: taskSel(t.id), start: t.start || '', end: t.due });
   });
   return map;
 }
@@ -2456,7 +2556,7 @@ async function seeNew(id) {
   me.tasks = (me.tasks || []).map(t => t.id === id ? Object.assign({}, t, { isNew: false }) : t);
   drawNew(me.tasks); // ほかにも新着が残っていれば窓はそのまま（残りだけ表示）、なくなれば閉じる
   drawTasks(me.tasks); // 先に画面を更新して裏で記録
-  const row = document.querySelector(`#tasks [data-id="${id}"]`);
+  const row = document.querySelector(taskSel(id));
   if (row) {
     mobShow(row);
     const fold = row.closest('details'); if (fold) fold.open = true;
@@ -2465,12 +2565,13 @@ async function seeNew(id) {
   }
   try { await call('seenTask', { id }); } catch (e) {} // 結果は同じなので描き直さない（ハイライトを残す）
 }
-async function reloadTasks() {
-  busy(true); $('tasksReload').classList.add('on'); // 読み込み中は反転
+async function reloadTasks(kind) {
+  const btn = $(kind === 'daily' ? 'dailyReload' : 'tasksReload'); // 日常業務の「更新」（2026-11-18）
+  busy(true); btn.classList.add('on'); // 読み込み中は反転
   try {
     await saveQueue; drawTasks(await call('tasks'));
-    if (!$('reqdBox').classList.contains('hidden')) drawRequested(await call('requestedTasks')); // 依頼した一覧を開いていれば一緒に最新に
-  } finally { busy(false); $('tasksReload').classList.remove('on'); }
+    if (kind !== 'daily' && !$('reqdBox').classList.contains('hidden')) drawRequested(await call('requestedTasks')); // 依頼した一覧を開いていれば一緒に最新に
+  } finally { busy(false); btn.classList.remove('on'); }
 }
 // 個別業務の自動更新（Ver1.2）：新着にすぐ気づけるよう、画面に戻った時（30秒以上たっていれば）と、開いている間は2分ごとに読み直す
 // （打刻画面を表示中・期日選択中・保存中でないときだけ。失敗しても表示しない）
@@ -2663,7 +2764,7 @@ function doGo() {
     if (g.startsWith('task:')) {
       const id = g.slice(5), t = (me.tasks || []).find(x => x.id === id);
       if (!t) { show('この個別業務は、もう完了しているか見つかりません'); return; }
-      if (t.isNew) seeNew(id); else jumpTo(`#tasks [data-id="${id}"]`);
+      if (t.isNew) seeNew(id); else jumpTo(taskSel(id));
     } else if (g === 'hand') jumpTo('#handBox');
     else if (g === 'clock') jumpTo('#clockCard');
     else if (g === 'admin' && me.admin) view('admin');
@@ -2846,35 +2947,35 @@ async function doneTask(t, cb) {
   } else if (!await ask('完了にしますか？')) { cb.checked = false; return; }
   // 2回目の確認（2026-11-17）：どの完了も、1回目の「はい」の後に最終確認（まとめ・はい／いいえ左右逆）を出し、ここでも取りやめられる。
   // 以前は複数あて・周期の決まった繰り返し・寺内スケジュールから追加した分は1回目ですぐ完了し、後から「確認」だけのお知らせが出ていた
-  const sum = `あなたの選択：${all ? `全員の分を完了にする（${nbs(t.mates)}の分も）` : '完了にする'}\n個別業務：${t.text.length > 40 ? t.text.slice(0, 40) + '…' : t.text}`
+  const sum = `あなたの選択：${all ? `全員の分を完了にする（${nbs(t.mates)}の分も）` : '完了にする'}\n${tw(t)}：${t.text.length > 40 ? t.text.slice(0, 40) + '…' : t.text}`
     + (all ? '' : (t.mates || []).length ? `\nまだ済んでいない担当：${nbs(t.mates)}（その人の分は残ります）` : t.multi ? '\nこの依頼の担当は、これで全員済みます' : '');
   const finalOk = more => ask('この内容で完了にしますか？\n\nはい＝完了する\nいいえ＝完了にしない', sum + more);
   if (t.repeat && t.rule) { // 周期が決まっている繰り返し：次回の期日は自動（サーバーと同じ計算で先に表示）
-    const today = ymd(new Date()), next = nextByRule(t.rule, t.due && t.due > today ? t.due : today);
+    const today = ymd(new Date()), next = isEvery(t.rule) ? everyNext(t.rule, today) : nextByRule(t.rule, t.due && t.due > today ? t.due : today); // 日常業務は今日から間隔だけ先
     const [, m, d] = next.split('-').map(Number);
-    if (!await finalOk(`\n${all ? '全員の' : ''}次回の期日：${m}/${d}（🔁${t.ruleLabel || ruleLabel(t.rule)}で繰り返し）`)) { cb.checked = false; return; }
-    drawTasks(sortTasks(me.tasks.map(x => x.id === t.id ? Object.assign({}, x, { due: next, isNew: false }) : x)));
+    if (!await finalOk(`\n${all ? '全員の' : ''}${t.daily ? '次回' : '次回の期日'}：${m}/${d}（🔁${t.ruleLabel || ruleLabel(t.rule)}で繰り返し）`)) { cb.checked = false; return; }
+    drawTasks(sortTasks(me.tasks.map(x => x.id === t.id ? Object.assign({}, x, { due: next, isNew: false }, t.daily ? { lastDone: today, lastBy: me.name } : {}) : x))); // 日常業務は前回完了日も先に直す
     saveLater('tasks', 'doneTask', { id: t.id, due: t.due || '', all });
-    show(`完了しました。次回の期日は ${m}/${d} です`);
+    show(`完了しました。次回${t.daily ? '' : 'の期日'}は ${m}/${d} です`);
     return;
   }
   if (t.repeat) { openTk(t, cb, false, all); return; } // 次回の期日を選ぶ窓（「キャンセル」で取りやめ）
   if (t.multi) { // 複数あての依頼で繰り返さない：繰り返すかは依頼の時に決めたので聞かない
-    if (!await finalOk('\nこの個別業務は繰り返しません（依頼の時に決めた繰り返し）')) { cb.checked = false; return; }
+    if (!await finalOk(`\nこの${tw(t)}は繰り返しません（依頼の時に決めた繰り返し）`)) { cb.checked = false; return; }
     drawTasks(me.tasks.filter(x => x.id !== t.id));
     saveLater('tasks', 'doneTask', { id: t.id, due: t.due || '', all });
-    show(all ? '全員の分を完了しました' : '個別業務を完了しました');
+    show(all ? '全員の分を完了しました' : `${tw(t)}を完了しました`);
     return;
   }
   // 繰り返しでない個別業務：これからも繰り返すか聞く（はい＝次回の期日と周期を選ぶ。2026-11-06）。寺内スケジュールから追加した分は寺内の方で繰り返すので聞かない
   if (t.from !== '寺内スケジュール' && !String(t.id).startsWith('tmp-')) {
-    const rp = await ask('この個別業務を繰り返しますか？\n\nはい＝次回の期日と繰り返し方を選ぶ\nいいえ＝繰り返さずにこのまま完了', sum, 'やめる（完了にしない）');
+    const rp = await ask(`この${tw(t)}を繰り返しますか？\n\nはい＝次回の期日と繰り返し方を選ぶ\nいいえ＝繰り返さずにこのまま完了`, sum, 'やめる（完了にしない）');
     if (rp === null) { cb.checked = false; return; } // やめる＝完了にしない（2026-11-17）
     if (rp) { openTk(t, cb, true); return; }
   } else if (!await finalOk('')) { cb.checked = false; return; }
   drawTasks(me.tasks.filter(x => x.id !== t.id)); // 返事を待たずに一覧から外す（保存は裏で）
   saveLater('tasks', 'doneTask', { id: t.id, due: t.due || '' });
-  show('個別業務を完了しました');
+  show(`${tw(t)}を完了しました`);
   // 寺内スケジュールから追加した個別業務：寺内スケジュールの方がまだ残っていれば、そちらも完了にするよう知らせる
   if (t.from === '寺内スケジュール' && (me.annual || []).some(a => !a.event && myStart(a)))
     notice('寺内スケジュールも完了にしてください', `この個別業務は、寺内スケジュールに着手した時に追加したものです。\n寺内スケジュールの「${((me.annual || []).find(a => !a.event && myStart(a) && a.text === t.text) || {}).text || t.text}」は、別に完了のチェックをしてください。`);
@@ -2892,12 +2993,27 @@ function ruleMatch(rule, d) {
   return false;
 }
 const WEEK = '日月火水木金土';
+/* 日常業務の間隔（2026-11-18。Task.gs と同じ）：ED:3＝3日ごと、EW:2＝2週間ごと、EM:1＝毎月。完了した日から数える */
+function isEvery(rule) { return /^E[DWM]:\d+$/.test(String(rule || '')); }
+function everyNext(rule, from) {
+  const [k, a] = String(rule).split(':'), n = Number(a), d = new Date(from + 'T00:00:00');
+  if (k === 'ED' || k === 'EW') { d.setDate(d.getDate() + (k === 'EW' ? 7 : 1) * n); return ymd(d); }
+  const day = d.getDate(); d.setDate(1); d.setMonth(d.getMonth() + n);
+  d.setDate(Math.min(day, new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate())); return ymd(d);
+}
+/** 間隔の入力欄（rq＝依頼の窓、ed＝編集の窓）→ { n, u }・周期。不正なら null */
+function everyOf(pre) {
+  const n = Number($(pre + 'EveryN').value), u = $(pre + 'EveryU').value;
+  return Number.isInteger(n) && n >= 1 && n <= 365 ? { n, u, rule: `E${u}:${n}` } : null;
+}
+function setEvery(pre, rule) { const [k, a] = isEvery(rule) ? String(rule).split(':') : ['ED', '1']; $(pre + 'EveryN').value = a; $(pre + 'EveryU').value = k.slice(1); }
 function ruleFromKind(kind, base) {
   const d = new Date(base + 'T00:00:00'), w = d.getDay(), day = d.getDate(), n = Math.ceil(day / 7);
   return { D: 'D', WD: 'WD', W: 'W:' + w, M: 'M:' + day, MN: 'MN:' + (n <= 4 ? n : 'L') + ':' + w, Y: 'Y:' + (d.getMonth() + 1) + '-' + day }[kind] || '';
 }
 function ruleLabel(rule) {
   const [k, a, b] = String(rule).split(':');
+  if (isEvery(rule)) { const u = k.slice(1); return Number(a) === 1 ? { D: '毎日', W: '毎週', M: '毎月' }[u] : a + { D: '日ごと', W: '週間ごと', M: 'ヶ月ごと' }[u]; } // 日常業務（2026-11-18）
   if (k === 'D') return '毎日';
   if (k === 'WD') return '平日（月〜金）';
   if (k === 'W') return '毎週 ' + a.split(',').map(i => WEEK[i]).join('・');
@@ -2914,10 +3030,10 @@ function nextByRule(rule, after) {
 async function removeTask(t) {
   if (String(t.id).startsWith('tmp-')) { show('保存が終わってから操作してください', true); return; }
   const mates = (t.mates || []).length ? `\n（同じ依頼の ${nbs(t.mates)} の分も削除されます）` : '';
-  if (!await ask(`${t.repeat ? 'この繰り返しの個別業務' : 'この個別業務'}を削除しますか？（7日間は「削除済み」から戻せます）` + mates)) return;
+  if (!await ask(`${t.repeat ? 'この繰り返しの' + tw(t) : 'この' + tw(t)}を削除しますか？（7日間は「削除済み」から戻せます）` + (t.daily ? '\n（日常業務は全員の画面から消えます）' : '') + mates)) return;
   // 二重確認（2026-11-17）：最終確認の形（はい／いいえが左右逆。勢いで同じ場所を押すと「いいえ」＝削除しない）
   if (!await ask('本当に削除しますか？\n\nはい＝削除する\nいいえ＝削除しない',
-    `あなたの選択：削除する\n個別業務：${t.text.length > 40 ? t.text.slice(0, 40) + '…' : t.text}` + ((t.mates || []).length ? `\n同じ依頼の ${nbs(t.mates)} の分も削除されます` : ''))) return;
+    `あなたの選択：削除する\n${tw(t)}：${t.text.length > 40 ? t.text.slice(0, 40) + '…' : t.text}` + ((t.mates || []).length ? `\n同じ依頼の ${nbs(t.mates)} の分も削除されます` : ''))) return;
   drawTasks(me.tasks.filter(x => x.id !== t.id)); // 返事を待たずに一覧から外す（保存は裏で）
   saveLater('tasks', 'removeTask', { id: t.id });
   show('削除しました（7日間は「削除済み」から戻せます）');
@@ -2997,7 +3113,15 @@ function taRepHint() { repHint($('taRep').value, $('taDate').value, taCur && taC
   try { h.open = localStorage.getItem('hoOpen') === '1'; } catch (e) {}
   h.addEventListener('toggle', () => { try { localStorage.setItem('hoOpen', h.open ? '1' : '0'); } catch (e) {} });
 })();
-function openRequest() {
+/** 個別業務を依頼（cat なし）・日常業務に追加（cat＝'daily'。2026-11-18 担当はなく全員で共有）。同じ窓を使う */
+let rqCat = '';
+function openRequest(cat) {
+  rqCat = cat === 'daily' ? 'daily' : '';
+  $('rqHead').textContent = rqCat ? '日常業務に追加' : '個別業務を依頼';
+  $('rqDailyNote').classList.toggle('hidden', !rqCat);
+  $('rqWhoWrap').classList.toggle('hidden', !!rqCat);
+  $('rqDateWrap').classList.toggle('hidden', !!rqCat); $('rqEveryWrap').classList.toggle('hidden', !rqCat); // 日常業務は期日の代わりに間隔（2026-11-18）
+  setEvery('rq', '');
   $('rqText').value = ''; $('rqDue').value = ''; $('rqDue').min = ymd(new Date()); $('rqStart').value = ''; startRange('rqStart', '');
   $('rqRep').value = ''; $('rqDaysWrap').classList.add('hidden');
   $('rqWho').innerHTML = '';
@@ -3017,15 +3141,30 @@ function openRequest() {
 }
 /** 担当が複数の時は、繰り返すかどうかを必ず選ぶ（2026-11-06。完了の時はここで決めた繰り返しを知らせる） */
 function rqRepNote() {
-  const n = $('rqWho').querySelectorAll('input:checked').length;
+  const n = rqCat ? 1 : $('rqWho').querySelectorAll('input:checked').length;
   $('rqRepNote').textContent = n > 1 ? '（担当が複数の時は必須。完了した人から一人ずつ消え、完了の時にこの繰り返しをお知らせします）' : '（選ばなければ繰り返さない）';
 }
 async function doRequest() {
   const p = { text: $('rqText').value.replace(/\s+/g, ' ').trim(), due: $('rqDue').value, start: $('rqStart').value, kind: $('rqRep').value,
     ids: [...$('rqWho').querySelectorAll('input:checked')].map(c => Number(c.value)),
     days: [...$('rqDays').querySelectorAll('input:checked')].map(c => Number(c.value)) };
+  const daily = rqCat === 'daily', w = daily ? '日常業務' : '個別業務';
+  if (daily) { // 日常業務は担当・期日なし。間隔だけ（2026-11-18）
+    if (!p.text) { alert('内容を入れてください'); return; }
+    const ev = everyOf('rq');
+    if (!ev) { alert('間隔は1〜365の数を入れてください'); return; }
+    const q = { text: p.text, cat: 'daily', every: { n: ev.n, u: ev.u }, rid: newRid() }, today = ymd(new Date());
+    $('rqBox').classList.add('hidden');
+    drawTasks(sortTasks((me.tasks || []).concat([{ id: 'tmp-' + q.rid, text: q.text, due: today, start: '', from: me.name, repeat: true, rule: ev.rule, ruleLabel: ruleLabel(ev.rule),
+      multi: false, mates: [], isNew: false, images: [], daily: true, lastDone: '' }])));
+    show('日常業務を登録しています…（そのまま操作を続けられます）');
+    saveLater('tasks', 'requestTask', q, { retry: true, pick: r => r.tasks,
+      ok: r => show(`日常業務に追加しました：「${q.text.slice(0, 30)}」（🔁${r.ruleLabel}）`),
+      fail: e => { show(`日常業務を登録できませんでした：${e.message}`, true); openRequestAgain(true); } });
+    return;
+  }
   if (!p.text) { alert('内容を入れてください'); return; }
-  if (!p.ids.length) { alert('担当を選んでください'); return; }
+  if (!daily && !p.ids.length) { alert('担当を選んでください'); return; }
   if (!p.kind && p.ids.length > 1) { alert('担当が複数の時は、繰り返すかどうか（繰り返し方）を選んでください'); return; }
   if (!p.kind) p.kind = 'none';
   if (!p.due) { alert('期日を選んでください'); return; } // 期日は必須（2026-11-11）
@@ -3035,20 +3174,28 @@ async function doRequest() {
   $('rqBox').classList.add('hidden');
   // 返事を待たずに一覧へ仮の行（登録中）を出し、登録は裏で（2026-11-08。以前は返事まで「反映中」で待たせていた）
   p.rid = newRid();
-  if (p.ids.includes(Number(auth.id))) {
+  if (daily || p.ids.includes(Number(auth.id))) {
     const today = ymd(new Date());
     const rule = p.kind === 'none' ? '' : p.kind === 'W' && p.days.length ? 'W:' + p.days.slice().sort().join(',') : ruleFromKind(p.kind, p.due || today);
     const due = rule ? (ruleMatch(rule, new Date((p.due || today) + 'T00:00:00')) ? (p.due || today) : nextByRule(rule, p.due || today)) : p.due;
     drawTasks(sortTasks((me.tasks || []).concat([{ id: 'tmp-' + p.rid, text: p.text, due, start: p.start && p.start < due ? p.start : '', from: me.name, repeat: !!rule, rule, ruleLabel: rule ? ruleLabel(rule) : '',
-      multi: p.ids.length > 1, mates: [], isNew: false, images: [] }])));
+      multi: p.ids.length > 1, mates: [], isNew: false, images: [], daily, lastDone: '' }])));
   }
-  show('個別業務を登録しています…（そのまま操作を続けられます）');
+  show(`${w}を登録しています…（そのまま操作を続けられます）`);
   saveLater('tasks', 'requestTask', p, { retry: true, pick: r => r.tasks,
     ok: r => {
       const [, m, d] = (r.due || '').split('-').map(Number);
-      show(`個別業務を依頼しました：${nbs(r.names)}「${p.text.slice(0, 30)}」` + (r.due ? `（期日 ${m}/${d}）` : '') + (r.ruleLabel ? ` 🔁${r.ruleLabel}` : ''));
+      show((daily ? `日常業務に追加しました：` : `個別業務を依頼しました：${nbs(r.names)}`) + `「${p.text.slice(0, 30)}」` + (r.due ? `（期日 ${m}/${d}）` : '') + (r.ruleLabel ? ` 🔁${r.ruleLabel}` : ''));
     },
-    fail: e => { show(`個別業務を登録できませんでした：${e.message}`, true); $('rqBox').classList.remove('hidden'); } }); // 入れた内容を残して窓を開き直す
+    fail: e => { show(`${w}を登録できませんでした：${e.message}`, true); openRequestAgain(daily); } }); // 入れた内容を残して窓を開き直す
+}
+/** 登録できなかった時に、入れた内容を残したまま窓を開き直す（日常業務・個別業務の別も戻す） */
+function openRequestAgain(daily) {
+  rqCat = daily ? 'daily' : '';
+  $('rqHead').textContent = daily ? '日常業務に追加' : '個別業務を依頼';
+  $('rqDailyNote').classList.toggle('hidden', !daily); $('rqWhoWrap').classList.toggle('hidden', daily);
+  $('rqDateWrap').classList.toggle('hidden', daily); $('rqEveryWrap').classList.toggle('hidden', !daily);
+  $('rqBox').classList.remove('hidden');
 }
 /** 送信の印（送り直した時にサーバーが同じ登録と分かるように） */
 function newRid() { return auth.id + '-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8); }
