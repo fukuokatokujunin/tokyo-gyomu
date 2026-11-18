@@ -7,8 +7,9 @@ self.addEventListener('push', e => {
   let d = {};
   try { d = e.data ? e.data.json() : {}; } catch (err) { d = { body: e.data ? e.data.text() : '' }; }
   const go = String(d.go || '');
-  const opt = { body: d.body || '', icon: 'icon-192.png', badge: 'icon-192.png', data: { go }, silent: false,
-    requireInteraction: go === 'hand' || go.startsWith('task:') }; // 頼まれた個別業務・申し送りは押すまで残す（PC）
+  // badge＝Androidの画面上部に出る小さい印（白と透明だけの絵。2026-11-18）。vibrate＝Androidで震える
+  const opt = { body: d.body || '', icon: 'icon-192.png', badge: 'icon-badge-96.png', vibrate: [200, 100, 200], data: { go }, silent: false,
+    requireInteraction: go === 'hand' || go.startsWith('task:') }; // 頼まれた個別業務・申し送りは押すまで残す（PC・Android）
   if (d.tag) { opt.tag = d.tag; opt.renotify = true; } // 同じ知らせは重ねず、出し直す時も音を鳴らす
   e.waitUntil(Promise.all([
     self.registration.showNotification(d.title || '東京徳純院', opt),
