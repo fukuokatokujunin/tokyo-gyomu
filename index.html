@@ -14,7 +14,7 @@
 <meta name="apple-mobile-web-app-title" content="東京徳純院">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="theme-color" content="#1e2533">
-<meta name="build" content="20261121112407">
+<meta name="build" content="20261121144051">
 <style>
   :root { --bg:#f6f7f9; --card:#fff; --ink:#1d2330; --sub:#6b7280; --pri:#2563eb; --ok:#059669; --ng:#dc2626; --warn:#d97706; --line:#e5e7eb; }
   * { box-sizing:border-box; }
@@ -3416,7 +3416,7 @@ function doneRepeat(end) {
 }
 
 /* 個別業務 → 寺内スケジュール（2026-11-03）：内容・初回期限・繰り返し・区分を確かめて移す */
-const JINAI_KINDS = ['配布関係', '告知関係', '法要関係', '発注・準備', '総代・御報謝', '寺内雑務', 'メモ']; // Annual.gs と同じ
+const JINAI_KINDS = ['配布・告知', '発注・準備', 'その他']; // Annual.gs と同じ（2026-11-21 3区分）
 let taCur = null;
 function openTaskToAnnual(t) {
   if (String(t.id).startsWith('tmp-')) { show('保存が終わってから操作してください', true); return; }
@@ -3425,7 +3425,7 @@ function openTaskToAnnual(t) {
   $('taText').value = t.text;
   $('taDate').min = today; $('taDate').value = t.due && t.due >= today ? t.due : today;
   if (!$('taKind').options.length) JINAI_KINDS.forEach(k => $('taKind').add(new Option(k, k)));
-  $('taKind').value = 'メモ';
+  $('taKind').value = 'その他';
   // 繰り返し：個別業務に周期があれば「いまと同じ」、周期のない繰り返しは毎年、繰り返しでなければ今回のみ（2026-11-04）
   const keep = t.repeat && t.rule && !/^Y:/.test(t.rule);
   [...$('taRep').options].filter(o => o.value === 'KEEP').forEach(o => o.remove()); // iPhoneは option の hidden が効かないので足し引きする
@@ -3548,7 +3548,7 @@ function openJinaiAdd() {
   });
   jaRepHint();
   if (!$('jaKind').options.length) JINAI_KINDS.forEach(k => $('jaKind').add(new Option(k, k)));
-  $('jaKind').value = 'メモ';
+  $('jaKind').value = 'その他';
   $('jaBox').classList.remove('hidden');
 }
 /** 寺内スケジュールに追加の繰り返し（2026-11-04。個別業務と同じく毎日・毎週・毎月も）：毎週の曜日欄と、次の回の説明 */
