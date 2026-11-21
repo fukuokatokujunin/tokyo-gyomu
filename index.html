@@ -14,7 +14,7 @@
 <meta name="apple-mobile-web-app-title" content="東京徳純院">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="theme-color" content="#1e2533">
-<meta name="build" content="20261121093529">
+<meta name="build" content="20261121094304">
 <style>
   :root { --bg:#f6f7f9; --card:#fff; --ink:#1d2330; --sub:#6b7280; --pri:#2563eb; --ok:#059669; --ng:#dc2626; --warn:#d97706; --line:#e5e7eb; }
   * { box-sizing:border-box; }
@@ -1499,7 +1499,7 @@ function view(v) {
   $('btnReq').classList.toggle('hidden', v === 'req' || me.noAttend);
   $('btnAdmin').classList.toggle('hidden', v === 'admin' || !me.admin);
   $('bookLinks').innerHTML = ''; // メニューの表のボタン（東京。2026-11-17）
-  (me.books || []).forEach(b => { const x = document.createElement('button'); x.textContent = b.label; x.onclick = () => window.open(b.url, '_blank'); $('bookLinks').appendChild(x); });
+  (me.books || []).forEach(b => { const x = document.createElement('button'); x.textContent = b.label; x.onclick = () => window.open(bookUrl(b), '_blank'); $('bookLinks').appendChild(x); });
   $('main').classList.toggle('wide', v === 'admin');
   if (v !== 'clock') mobTab = 'home'; // 管理・シフト希望から戻った時はTOP
   mobBar();
@@ -1606,6 +1606,12 @@ function render(s) {
   alarmCheck();
 }
 
+/** メニューの表のURL。塔婆カレンダーは押した時の月のタブ（「2026.11」など）を開く。タブがまだなければ表をそのまま開く（2026-11-21） */
+function bookUrl(b, now) {
+  now = now || new Date();
+  const gid = (b.tabs || {})[`${now.getFullYear()}.${now.getMonth() + 1}`];
+  return gid == null ? b.url : `${b.url}#gid=${gid}`;
+}
 // 右上のメニュー：外側を押したら閉じる（2026-11-18 PCも折りたたみに）
 document.addEventListener('click', e => { const m = $('menu'); if (m.classList.contains('open') && !m.contains(e.target)) menuOpen(false); });
 // メニューの開け閉め：全画面に写真の背景で開き、三本線を「米」の形にする（2026-11-18）
