@@ -14,7 +14,7 @@
 <meta name="apple-mobile-web-app-title" content="東京徳純院">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="theme-color" content="#1e2533">
-<meta name="build" content="20261123121950">
+<meta name="build" content="20261124110804">
 <style>
   :root { --bg:#f6f7f9; --card:#fff; --ink:#1d2330; --sub:#6b7280; --pri:#2563eb; --ok:#059669; --ng:#dc2626; --warn:#d97706; --line:#e5e7eb; }
   * { box-sizing:border-box; }
@@ -828,7 +828,9 @@
           <div class="thumbs" id="hoThumbs"></div>
           <button id="hoBtn" onclick="sendHandover()">引き継ぎを送信</button>
         </div>
-        <div id="hoList"></div><!-- 引き継ぎ事項の一覧（2026-11-18）：全員の引き継ぎを新しい順に。消すまで残る -->
+        <div id="hoList"></div><!-- 引き継ぎ事項の一覧（2026-11-18）：引き継ぎを新しい順に（2026-11-24 対象者・送った人だけ）。消すまで残る -->
+        <div class="horm"><button class="hbtn" data-box="hoRmBox" onclick="toggleHoRemoved()">消した引き継ぎ</button></div><!-- 消した引き継ぎを戻す（2026-11-24） -->
+        <div class="donebox hidden" id="hoRmBox"><b>消した引き継ぎ（7日間）</b><div id="hoRm"></div></div>
       </details>
       <!-- 日常業務（2026-11-18）：個別業務と同じ形。担当はなく全員で共有。前回完了日を出す。全部を折りたたみ（2026-11-21。以前は1週間以上先だけ）。PCは予定カレンダーの下、スマホは下部タブ -->
       <div class="card task hidden" id="dailyBox">
@@ -3777,17 +3779,58 @@ document.addEventListener('visibilitychange', alarmCheck);
 
 async function ack(id, cb) {
   // 確認した後、自分の一覧から消すかは受けた人が選ぶ（2026-11-21 ユーザー指定）。消すのは自分の画面だけ（送った人・ほかの人の一覧には残る）
-  const hide = (await choose('確認しました。\n\nこの引き継ぎを、自分の「引き継ぎ事項」の一覧から消しますか？\n（消すのは自分の画面だけです。送った人やほかの人の一覧には残ります。\n残した場合も、あとで「自分の画面から消す」で消せます）',
-    ['自分の画面から消す', '残す'])) === 0;
+  const hide = (await choose('確認しました。\n\nこの引き継ぎを、自分の「引き継ぎ事項」の一覧に残しますか？消しますか？\n（消すのは自分の画面だけです。送った人やほかの宛先の人の一覧には残ります。\n残した場合も、あとで「自分の画面から消す」で消せます。消した分は「消した引き継ぎ」から7日間戻せます）',
+    ['自分の画面から消す', '残す'])) === 0 && await hoHideSure(((me.hoList || []).find(x => x.mine === id) || (me.handovers || []).find(x => String(x.id) === String(id)) || {}).text || '（引き継ぎ）'); // 消す時は「本当に消しますか？」をもう一度（2026-11-24 ユーザー指定）。いいえなら残して確認だけ
   busy(true);
-  try { render(await call('ackHandover', { id, hide })); show(hide ? '確認しました（自分の一覧から消しました）' : '確認しました'); } // 2026-11-18 個別業務へ移すのは廃止（引き継ぎ事項の一覧に残る）
+  try { render(await call('ackHandover', { id, hide })); show(hide ? '確認しました（自分の一覧から消しました。「消した引き継ぎ」から戻せます）' : '確認しました'); if (hide) refreshHoRemoved(); } // 2026-11-18 個別業務へ移すのは廃止（引き継ぎ事項の一覧に残る）
   catch (e) { if (cb) cb.checked = false; }
   finally { busy(false); }
 }
+/* 消した引き継ぎ（2026-11-24 ユーザー指定）：自分の画面から消した分・ゴミ箱で削除した分（7日間）を「戻す」 */
+async function toggleHoRemoved() {
+  const box = $('hoRmBox');
+  if (!box.classList.contains('hidden')) { box.classList.add('hidden'); syncHbtns(); return; }
+  box.classList.remove('hidden'); syncHbtns();
+  $('hoRm').innerHTML = '<p class="sub">読み込み中…</p>';
+  try { await saveQueue; drawHoRemoved(await call('hoRemoved')); } catch (e) { $('hoRm').innerHTML = ''; }
+}
+function drawHoRemoved(list) {
+  const box = $('hoRm');
+  box.innerHTML = list.length ? '' : '<p class="sub">消した引き継ぎはありません</p>';
+  list.forEach(a => {
+    const row = document.createElement('div'); row.className = 'titem';
+    const body = document.createElement('div'); body.style.flex = '1';
+    const t = document.createElement('div'); t.className = 't'; t.append(linked(a.text));
+    const m = document.createElement('div'); m.className = 'sub';
+    m.append(a.date + '　', pn(a.from + 'より'), ' → ', pn(a.to));
+    const w = document.createElement('div'); w.className = 'sub';
+    w.textContent = a.at + (a.kind === 'hide' ? ' 自分の画面から消した' : ' 削除');
+    if (a.kind !== 'hide' && a.by) w.appendChild(pn('（' + a.by + '）'));
+    const b = document.createElement('button'); b.className = 'pp st'; b.textContent = '戻す';
+    b.onclick = async () => {
+      if (!await ask(a.kind === 'hide' ? 'この引き継ぎを、自分の一覧に戻しますか？' : 'この引き継ぎを元に戻しますか？（送った人・宛先の人の一覧に戻ります）')) return;
+      busy(true);
+      try { await saveQueue; const r = await call('restoreHandover', { id: a.id, kind: a.kind }); render(r); drawHoRemoved(r.removed || []); show('元に戻しました'); }
+      catch (e) {}
+      finally { busy(false); }
+    };
+    body.append(t, m, w); row.append(body, b); box.appendChild(row);
+  });
+}
+function refreshHoRemoved() {
+  if ($('hoRmBox').classList.contains('hidden')) return;
+  rawCall('hoRemoved', auth).then(drawHoRemoved).catch(() => {});
+}
 /* 確認済みの引き継ぎを自分の一覧から消す（2026-11-21）。ほかの人の一覧には残る */
+/* 「本当に消しますか？」の二重チェック（2026-11-24 ユーザー指定）。text があれば、何を消すかを添える */
+function hoHideSure(text) {
+  return ask('本当に自分の画面から消しますか？\n\nはい＝消す\nいいえ＝残す', text ? 'あなたの選択：自分の画面から消す\n引き継ぎ：' + (text.length > 40 ? text.slice(0, 40) + '…' : text) : '');
+}
 async function hideHo(h) {
+  if (!await ask('この引き継ぎを、自分の画面から消しますか？\n（送った人やほかの宛先の人の一覧には残ります。7日間は「消した引き継ぎ」から戻せます）')) return;
+  if (!await hoHideSure(h.text)) return;
   busy(true);
-  try { render(await call('hideHandover', { id: h.hide })); show('自分の一覧から消しました（ほかの人の一覧には残ります）'); }
+  try { render(await call('hideHandover', { id: h.hide })); show('自分の一覧から消しました（ほかの人の一覧には残ります。「消した引き継ぎ」から戻せます）'); refreshHoRemoved(); }
   catch (e) {}
   finally { busy(false); }
 }
@@ -3960,10 +4003,10 @@ function openHoEdit(h) {
   $('edBox').classList.remove('hidden');
 }
 async function removeHo(h) {
-  if (!await ask('この引き継ぎを削除しますか？\n（全員の一覧から消えます。まだ確認していない人の申し送りからも消えます）')) return;
+  if (!await ask('この引き継ぎを削除しますか？\n（送った人・宛先の人全員の一覧から消えます。まだ確認していない人の申し送りからも消えます。7日間は「消した引き継ぎ」から戻せます）')) return;
   if (!await ask('本当に削除しますか？\n\nはい＝削除する\nいいえ＝削除しない', `あなたの選択：削除する\n引き継ぎ：${h.text.length > 40 ? h.text.slice(0, 40) + '…' : h.text}`)) return;
   busy(true);
-  try { render(await call('removeHandover', { id: h.id })); show('引き継ぎを削除しました'); }
+  try { render(await call('removeHandover', { id: h.id })); show('引き継ぎを削除しました'); refreshHoRemoved(); }
   finally { busy(false); }
 }
 /** 引き継ぎ事項を送る（2026-11-08 退勤前チェックから独立。PC・スマホとも）。送れたら true */
